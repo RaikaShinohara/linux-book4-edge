@@ -19,7 +19,7 @@ Supported features:
 - [ ] Display - module probes fine, but causes the screen to become green, use simpledrm instead, needs firmware extracted from Windows
 - [x] Display with Alt DP - works, tested with multiple Type C adapters
 - [x] GPU - working fine when external monitor connected, needs firmware extracted from Windows
-- [ ] HDMI port on the right side, not working
+- [x] HDMI port on the right side, working with dispcc enabled, same as AltDP
 - [ ] Sleep - device reboots
 - [ ] Hibernate - not tested
  
