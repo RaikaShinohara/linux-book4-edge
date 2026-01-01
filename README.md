@@ -11,7 +11,7 @@ Supported features:
 - [x] USB type-c
 - [x] UFS storage - power management generates some kernel warnings but nothing fatal
 - [x] HDMI port on the right side
-- [ ] Built-in display - Black screen when attempting to load drm/msm, but works on fallback with no modules
+- [x] Built-in display - fixed using the following [patch](https://bugs.launchpad.net/ubuntu-concept/+bug/2084591/comments/99)
 - [ ] Touchscreen
 - [ ] PCIe ports (pcie4)
   - [ ] Wifi - untested / needs firmware(?)
