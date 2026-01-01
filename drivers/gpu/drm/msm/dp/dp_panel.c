@@ -183,12 +183,17 @@ int msm_dp_panel_read_sink_caps(struct msm_dp_panel *msm_dp_panel,
 	}
 
 	bw_code = drm_dp_link_rate_to_bw_code(msm_dp_panel->link_info.rate);
-	if (!is_link_rate_valid(bw_code) ||
-			!is_lane_count_valid(msm_dp_panel->link_info.num_lanes) ||
-			(bw_code > msm_dp_panel->max_bw_code)) {
-		DRM_ERROR("Illegal link rate=%d lane=%d\n", msm_dp_panel->link_info.rate,
-				msm_dp_panel->link_info.num_lanes);
-		return -EINVAL;
+        if (!is_link_rate_valid(bw_code) ||
+          !is_lane_count_valid(msm_dp_panel->link_info.num_lanes) ||
+          (bw_code > msm_dp_panel->max_bw_code)) {
+                DRM_ERROR("Illegal link rate=%d lane=%d\n", msm_dp_panel->link_info.rate,
+                msm_dp_panel->link_info.num_lanes);
+                #if 0
+                return -EINVAL;
+                #else
+                msm_dp_panel->link_info.rate = msm_dp_panel->max_dp_link_rate;
+                drm_dbg_dp(panel->drm_dev, "fall back to %d\n", msm_dp_panel->link_info.rate);
+                #endif
 	}
 
 	if (drm_dp_is_branch(msm_dp_panel->dpcd)) {
