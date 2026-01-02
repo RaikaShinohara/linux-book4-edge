@@ -403,9 +403,6 @@
 		enable-gpios = <&tlmm 168 GPIO_ACTIVE_LOW>;
 		select-gpios = <&tlmm 167 GPIO_ACTIVE_HIGH>;
 
-		pinctrl-0 = <&usb_1_ss0_sbu_default>;
-		pinctrl-names = "default";
-
 		mode-switch;
 		orientation-switch;
 
@@ -421,9 +418,6 @@
 
 		enable-gpios = <&tlmm 179 GPIO_ACTIVE_LOW>;
 		select-gpios = <&tlmm 178 GPIO_ACTIVE_HIGH>;
-
-		pinctrl-0 = <&usb_1_ss1_sbu_default>;
-		pinctrl-names = "default";
 
 		mode-switch;
 		orientation-switch;
@@ -867,25 +861,67 @@
 	};
 };
 
-&i2c5 {
+&i2c2 {
 	clock-frequency = <400000>;
 
 	status = "okay";
 
-	eusb5_repeater: redriver@43 {
+	eusb0_repeater: redriver@4f {
 		compatible = "nxp,ptn3222";
-		reg = <0x43>;
+		reg = <0x4f>;
 		#phy-cells = <0>;
 
-		vdd3v3-supply = <&vreg_l13b_3p0>;
-		vdd1v8-supply = <&vreg_l4b_1p8>;
+		vdd3v3-supply = <&vreg_l2b_3p0>;
+		vdd1v8-supply = <&vreg_l3d_1p8>;
 
-		reset-gpios = <&tlmm 7 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&tlmm 10 GPIO_ACTIVE_LOW>;
+
+		pinctrl-0 = <&eusb0_reset_n>;
+		pinctrl-names = "default";
+	};
+};
+
+&i2c4 {
+	clock-frequency = <400000>;
+
+	status = "okay";
+
+	eusb1_repeater: redriver@4f {
+		compatible = "nxp,ptn3222";
+		reg = <0x4f>;
+		#phy-cells = <0>;
+
+		vdd3v3-supply = <&vreg_l14b_3p0>;
+		vdd1v8-supply = <&vreg_l3d_1p8>;
+
+		reset-gpios = <&tlmm 19 GPIO_ACTIVE_LOW>;
+
+		pinctrl-0 = <&eusb1_reset_n>;
+		pinctrl-names = "default";
+	};
+};
+
+&i2c6 {
+	clock-frequency = <400000>;
+
+	status = "okay";
+
+	eusb5_repeater: redriver@4f {
+		compatible = "nxp,ptn3222";
+		reg = <0x4f>;
+		#phy-cells = <0>;
+
+		vdd3v3-supply = <&vreg_l8b_3p0>;
+		vdd1v8-supply = <&vreg_l3d_1p8>;
+
+		reset-gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
 
 		pinctrl-0 = <&eusb5_reset_n>;
 		pinctrl-names = "default";
 	};
+};
 
+&i2c18 {
 	eusb6_repeater: redriver@4f {
 		compatible = "nxp,ptn3222";
 		reg = <0x4f>;
@@ -894,7 +930,7 @@
 		vdd3v3-supply = <&vreg_l13b_3p0>;
 		vdd1v8-supply = <&vreg_l4b_1p8>;
 
-		reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&tlmm 74 GPIO_ACTIVE_LOW>;
 
 		pinctrl-0 = <&eusb6_reset_n>;
 		pinctrl-names = "default";
@@ -1264,8 +1300,24 @@
 		bias-disable;
 	};
 
+	eusb0_reset_n: eusb0-reset-n-state {
+		pins = "gpio10";
+		function = "gpio";
+		drive-strength = <2>;
+		bias-disable;
+		output-low;
+	};
+
+	eusb1_reset_n: eusb1-reset-n-state {
+		pins = "gpio19";
+		function = "gpio";
+		drive-strength = <2>;
+		bias-disable;
+		output-low;
+	};
+
 	eusb5_reset_n: eusb5-reset-n-state {
-		pins = "gpio7";
+		pins = "gpio26";
 		function = "gpio";
 		drive-strength = <2>;
 		bias-disable;
@@ -1273,7 +1325,7 @@
 	};
 
 	eusb6_reset_n: eusb6-reset-n-state {
-		pins = "gpio184";
+		pins = "gpio74";
 		function = "gpio";
 		drive-strength = <2>;
 		bias-disable;
@@ -1321,79 +1373,6 @@
 			function = "gpio";
 			output-high;
 			drive-strength = <16>;
-		};
-	};
-
-	usb_1_ss0_sbu_default: usb-1-ss0-sbu-state {
-		mode-pins {
-			pins = "gpio166";
-			function = "gpio";
-			bias-disable;
-			drive-strength = <2>;
-			output-high;
-		};
-
-		oe-n-pins {
-			pins = "gpio168";
-			function = "gpio";
-			bias-disable;
-			drive-strength = <2>;
-		};
-
-		sel-pins {
-			pins = "gpio167";
-			function = "gpio";
-			bias-disable;
-			drive-strength = <2>;
-		};
-
-	};
-
-	usb_1_ss1_sbu_default: usb-1-ss1-sbu-state {
-		mode-pins {
-			pins = "gpio177";
-			function = "gpio";
-			bias-disable;
-			drive-strength = <2>;
-			output-high;
-		};
-
-		oe-n-pins {
-			pins = "gpio179";
-			function = "gpio";
-			bias-disable;
-			drive-strength = <2>;
-		};
-
-		sel-pins {
-			pins = "gpio178";
-			function = "gpio";
-			bias-disable;
-			drive-strength = <2>;
-		};
-	};
-
-	usb_1_ss2_sbu_default: usb-1-ss2-sbu-state {
-		mode-pins {
-			pins = "gpio169";
-			function = "gpio";
-			bias-disable;
-			drive-strength = <2>;
-			output-high;
-		};
-
-		oe-n-pins {
-			pins = "gpio171";
-			function = "gpio";
-			bias-disable;
-			drive-strength = <2>;
-		};
-
-		sel-pins {
-			pins = "gpio170";
-			function = "gpio";
-			bias-disable;
-			drive-strength = <2>;
 		};
 	};
 
@@ -1549,17 +1528,16 @@
 	status = "okay";
 };
 
-&usb_mp_dwc3 {
-	/* Limit to single port */
-	phys = <&usb_mp_hsphy0>, <&usb_mp_qmpphy0>;
-	phy-names = "usb2-0", "usb3-0";
-};
-
 &usb_mp_hsphy0 {
 	vdd-supply = <&vreg_l2e_0p8>;
 	vdda12-supply = <&vreg_l3e_1p2>;
 
-	phys = <&eusb6_repeater>;
+	status = "okay";
+};
+
+&usb_mp_hsphy1 {
+	vdd-supply = <&vreg_l2e_0p8>;
+	vdda12-supply = <&vreg_l3e_1p2>;
 
 	status = "okay";
 };
@@ -1571,3 +1549,9 @@
 	status = "okay";
 };
 
+&usb_mp_qmpphy1 {
+	vdda-phy-supply = <&vreg_l3e_1p2>;
+	vdda-pll-supply = <&vreg_l3c_0p8>;
+
+	status = "okay";
+};
