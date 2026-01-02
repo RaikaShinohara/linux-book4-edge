@@ -262,6 +262,48 @@
 		};
 	};
 
+	vreg_octa_vdd: regulator-octa-vdd {
+		compatible = "regulator-fixed";
+
+		regulator-name = "VREG_OCTA_VDD";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+
+		gpio = <&tlmm 111 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+
+		pinctrl-0 = <&octa_vdd_en>;
+		pinctrl-names = "default";
+
+		startup-delay-us = <1000>;
+		regulator-enable-ramp-delay = <1000>;
+
+		regulator-always-on;
+		regulator-boot-on;
+	};
+
+	vreg_display_vdd: regulator-display-vdd {
+		compatible = "regulator-fixed";
+
+		regulator-name = "VREG_DISPLAY_VDD";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+
+		gpio = <&tlmm 120 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+
+		pinctrl-0 = <&display_vdd_en>;
+		pinctrl-names = "default";
+
+		startup-delay-us = <400000>;
+		regulator-enable-ramp-delay = <400000>;
+
+		vin-supply = <&vreg_octa_vdd>;
+
+		regulator-always-on;
+		regulator-boot-on;
+	};
+	
 	vreg_edp_3p3: regulator-edp-3p3 {
 		compatible = "regulator-fixed";
 
@@ -269,15 +311,21 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 
-		gpio = <&tlmm 70 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
+		gpio = <&tlmm 70 GPIO_ACTIVE_LOW>;
+		enable-active-low;
 
 		pinctrl-0 = <&edp_reg_en>;
 		pinctrl-names = "default";
 
+		startup-delay-us = <1000>;
+		regulator-enable-ramp-delay = <1000>;
+
+		vin-supply = <&vreg_display_vdd>;
+
 		regulator-always-on;
 		regulator-boot-on;
 	};
+
 
 	vreg_misc_3p3: regulator-misc-3p3 {
 		compatible = "regulator-fixed";
@@ -957,9 +1005,10 @@
 
 	aux-bus {
 		panel {
-			compatible = "samsung,atna45dc02", "samsung,atna33xc20";
+			compatible = "samsung,atna60cl07", "samsung,atna33xc20";
 			enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
 			power-supply = <&vreg_edp_3p3>;
+			hpd-gpios = <&tlmm 119 GPIO_ACTIVE_HIGH>;
 
 			pinctrl-0 = <&edp_bl_en>;
 			pinctrl-names = "default";
@@ -977,7 +1026,7 @@
 			reg = <1>;
 			mdss_dp3_out: endpoint {
 				data-lanes = <0 1 2 3>;
-				link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+				link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000>;
 
 				remote-endpoint = <&edp_panel_in>;
 			};
@@ -1168,8 +1217,34 @@
 		pins = "gpio70";
 		function = "gpio";
 		drive-strength = <16>;
-		bias-disable;
+		bias-pull-up;
+		output-low;
 	};
+
+	octa_vdd_en: octa-vdd-en-state {
+		pins = "gpio111";
+		function = "gpio";
+		drive-strength = <16>;
+		bias-pull-up;
+		output-high;
+	};
+
+	display_vdd_en: display-vdd-en-state {
+		pins = "gpio120";
+		function = "gpio";
+		drive-strength = <16>;
+		bias-pull-up;
+		output-high;
+	};
+
+	edp0_hpd_default: edp0-hpd-default-state {
+		pins = "gpio119";
+		function = "edp0_hot";
+		bias-pull-down;
+		input-enable;
+		drive-strength = <2>;
+	};
+	
 
 	hall_int_n_default: hall-int-n-state {
 		pins = "gpio92";
