@@ -12,14 +12,13 @@ Supported features:
 - [x] UFS storage - power management generates some kernel warnings but nothing fatal
 - [x] HDMI port on the right side
 - [x] Built-in display - fixed using the following [patch](https://bugs.launchpad.net/ubuntu-concept/+bug/2084591/comments/99)
-- [ ] GPU - untested / needs updated Mesa + firmware
+- [x] GPU - needs firmware + updated Mesa (tested on 25.3.3). [Enable](https://github.com/zensanp/linux-book4-edge/blob/49323f22adcc3d54c47c985622bdab90f1663aab/arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dts#L839) only after updating, or black screen after boot.
 - [ ] Touchscreen
-- [ ] PCIe ports (pcie4)
-  - [ ] Wifi - seems to need patched board-2.bin. Same issue as on the SL7 discussed [here](https://github.com/bryce-hoehn/linux-surface-laptop-7/issues/1)
-  - [ ] BT - needs firmware
+- [x] Wifi - 16" only. 14" needs patched board-2.bin + possibly other tweaks. Discussed [here](https://github.com/zensanp/linux-book4-edge/issues/3)
+- [ ] BT - needs firmware
 
 - [x] ADSP and CDSP - need firmware 
 - [ ] Audio - untested / needs firmware(?)
 - [ ] DP Altmode - untested / needs firmware(?)
-- [ ] Sleep - untested
+- [x] Sleep - Does it work?: Yes. Does it save power?: Not really. 
 - [ ] Hibernate - untested
