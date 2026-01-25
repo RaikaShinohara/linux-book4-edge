@@ -394,6 +394,7 @@
 		pinctrl-0 = <&wcn_sw_en>;
 		pinctrl-names = "default";
 
+		regulator-always-on;
 		regulator-boot-on;
 	};
 
