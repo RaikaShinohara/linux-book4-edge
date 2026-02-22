@@ -322,6 +322,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-mtp.dtb
 dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-qrd.dtb
 dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-mtp.dtb
 dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-qrd.dtb
+dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-samsung-galaxy-book4-edge.dtb
 x126100-lenovo-ideapad-slim3-el2-dtbs := x126100-lenovo-ideapad-slim3.dtb x1-el2.dtbo
 dtb-$(CONFIG_ARCH_QCOM)	+= x126100-lenovo-ideapad-slim3.dtb x126100-lenovo-ideapad-slim3-el2.dtb
 x1e001de-devkit-el2-dtbs	:= x1e001de-devkit.dtb x1-el2.dtbo
