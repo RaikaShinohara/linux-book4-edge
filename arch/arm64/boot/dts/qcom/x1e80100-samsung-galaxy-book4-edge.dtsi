@@ -303,7 +303,7 @@
 		regulator-always-on;
 		regulator-boot-on;
 	};
-	
+
 	vreg_edp_3p3: regulator-edp-3p3 {
 		compatible = "regulator-fixed";
 
@@ -394,8 +394,8 @@
 		pinctrl-0 = <&wcn_sw_en>;
 		pinctrl-names = "default";
 
-		regulator-boot-on;
 		regulator-always-on;
+		regulator-boot-on;
 	};
 
 	usb-1-ss0-sbu-mux {
@@ -432,13 +432,6 @@
 
 	wcn7850-pmu {
 		compatible = "qcom,wcn7850-pmu";
-
-		vdd-supply = <&vreg_wcn_0p95>;
-		vddio-supply = <&vreg_l15b_1p8>;
-		vddaon-supply = <&vreg_wcn_0p95>;
-		vdddig-supply = <&vreg_wcn_0p95>;
-		vddrfa1p2-supply = <&vreg_wcn_1p9>;
-		vddrfa1p8-supply = <&vreg_wcn_1p9>;
 
 		wlan-enable-gpios = <&tlmm 117 GPIO_ACTIVE_HIGH>;
 		bt-enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
@@ -970,20 +963,6 @@
 	clock-frequency = <400000>;
 
 	status = "okay";
-
-	touchpad@50 {
-		compatible = "hid-over-i2c";
-		reg = <0x50>;
-
-		hid-descr-addr = <0xd1>;	// IMAGES
-		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
-
-		vdd-supply = <&vreg_misc_3p3>;
-		vddl-supply = <&vreg_l15b_1p8>;
-
-		pinctrl-0 = <&tpad_default>;
-		pinctrl-names = "default";
-	};
 };
 
 &lpass_tlmm {
@@ -1049,13 +1028,13 @@
 	pinctrl-names = "default";
 
 	status = "okay";
-	no-hpd;
 
 	aux-bus {
-		panel {
+		panel: panel {
 			compatible = "samsung,atna60cl07", "samsung,atna33xc20";
 			enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
 			power-supply = <&vreg_edp_3p3>;
+			hpd-gpios = <&tlmm 119 GPIO_ACTIVE_HIGH>;
 
 			pinctrl-0 = <&edp_bl_en>;
 			pinctrl-names = "default";
@@ -1291,7 +1270,7 @@
 		input-enable;
 		drive-strength = <2>;
 	};
-	
+
 
 	hall_int_n_default: hall-int-n-state {
 		pins = "gpio92";
