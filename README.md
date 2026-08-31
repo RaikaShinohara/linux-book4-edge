@@ -8,6 +8,8 @@ This branch also contains an initial Device Tree for the 15.6-inch Samsung
 Galaxy Book4 Edge NP750XQA with the Snapdragon X Plus X1P42100. See the
 [NP750XQA bring-up notes](Documentation/arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst)
 and the [board Device Tree](arch/arm64/boot/dts/qcom/x1p42100-samsung-galaxy-book4-edge.dts).
+The complete project context and hand-off for continuing this work on another
+machine is in [Documentation/np750xqa-project](Documentation/np750xqa-project/README.md).
 
 ## X1P42100 NP750XQA status
 
