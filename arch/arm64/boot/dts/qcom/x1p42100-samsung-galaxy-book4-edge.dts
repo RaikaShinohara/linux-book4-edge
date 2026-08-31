@@ -1,0 +1,77 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * Initial Linux bring-up for the Samsung Galaxy Book4 Edge NP750XQA.
+ *
+ * The factory DSDT identifies the platform as SCP_PURWA / CRD08380, so the
+ * Qualcomm X1P42100 CRD is the least-assumptive base for the first boot.
+ */
+
+/dts-v1/;
+
+#include "x1p42100.dtsi"
+#include "x1-crd.dtsi"
+
+/delete-node/ &pmc8380_6;
+/delete-node/ &pmc8380_6_thermal;
+
+/ {
+	model = "Samsung Galaxy Book4 Edge (NP750XQA)";
+	compatible = "samsung,galaxy-book4-edge-np750xqa", "qcom,x1p42100";
+	chassis-type = "laptop";
+};
+
+/* The CRD input devices are not fitted to this Samsung board. */
+&i2c0 {
+	/delete-node/ touchpad@15;
+	/delete-node/ keyboard@3a;
+
+	keyboard@5 {
+		compatible = "hid-over-i2c";
+		reg = <0x5>;
+
+		hid-descr-addr = <0x20>;
+		interrupts-extended = <&tlmm 67 IRQ_TYPE_LEVEL_LOW>;
+
+		pinctrl-0 = <&kybd_default>;
+		pinctrl-names = "default";
+
+		wakeup-source;
+	};
+};
+
+&i2c8 {
+	/delete-node/ touchscreen@10;
+};
+
+/*
+ * The factory panel is a KDB KD156N2030A03, not the ATNA panel described by
+ * x1-crd.dtsi. Keep the DP controller off until its power/reset sequence is
+ * represented accurately; the firmware framebuffer remains the early-console
+ * path for the first boot.
+ */
+&mdss_dp3 {
+	status = "disabled";
+};
+
+/* The CRD camera sensor is not a description of the NP750XQA camera path. */
+&camss {
+	status = "disabled";
+};
+
+/* Internal Kioxia UFS storage, confirmed by ACPI QCOM24A5 at 0x01d84000. */
+&ufs_mem_hc {
+	status = "okay";
+
+	vcc-supply = <&vreg_l17b_2p5>;
+	vcc-max-microamp = <600000>;
+
+	vccq-supply = <&vreg_l2i_1p2>;
+	vccq-max-microamp = <600000>;
+};
+
+&ufs_mem_phy {
+	status = "okay";
+
+	vdda-phy-supply = <&vreg_l3i_0p8>;
+	vdda-pll-supply = <&vreg_l3e_1p2>;
+};
