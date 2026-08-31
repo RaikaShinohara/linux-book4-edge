@@ -1160,6 +1160,7 @@ properties:
           - enum:
               - asus,zenbook-a14-ux3407qa
               - qcom,x1p42100-crd
+              - samsung,galaxy-book4-edge-np750xqa
           - const: qcom,x1p42100
 
   # Board compatibles go above
