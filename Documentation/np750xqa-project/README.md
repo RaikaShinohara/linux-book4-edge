@@ -29,6 +29,10 @@ need to repeat the project history.
 The latest workstation build and validation results are recorded in
 [BUILD_RECORD.md](BUILD_RECORD.md).
 
+The prepared removable recovery system is described in
+[USB_RECOVERY_RECORD.md](USB_RECOVERY_RECORD.md), and the physical procedure is
+in [FIRST_BOOT.md](FIRST_BOOT.md).
+
 ## Current milestone
 
 The repository contains a conservative first-boot DTB, not a proven hardware

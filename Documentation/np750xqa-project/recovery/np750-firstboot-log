@@ -1,0 +1,28 @@
+#!/bin/sh
+
+set -eu
+
+log_dir=/var/log/np750xqa
+stamp=$(date -u +%Y%m%dT%H%M%SZ)
+dest="$log_dir/$stamp"
+
+mkdir -p "$dest"
+dmesg >"$dest/dmesg.txt" 2>&1 || true
+cat /proc/cmdline >"$dest/proc-cmdline.txt" 2>&1 || true
+cat /proc/iomem >"$dest/proc-iomem.txt" 2>&1 || true
+cat /proc/interrupts >"$dest/proc-interrupts.txt" 2>&1 || true
+cat /sys/firmware/devicetree/base/model >"$dest/dt-model.txt" 2>&1 || true
+tr '\0' '\n' </sys/firmware/devicetree/base/compatible >"$dest/dt-compatible.txt" 2>&1 || true
+lsblk -O >"$dest/lsblk.txt" 2>&1 || true
+blkid >"$dest/blkid.txt" 2>&1 || true
+find /sys/class/scsi_host /sys/class/scsi_disk /sys/class/block -maxdepth 3 \
+    -type f -print >"$dest/storage-sysfs-files.txt" 2>&1 || true
+journalctl -b --no-pager >"$dest/journal.txt" 2>&1 || true
+
+for pstore_file in /sys/fs/pstore/*; do
+    [ -f "$pstore_file" ] || continue
+    cp "$pstore_file" "$dest/" || true
+done
+
+sync
+
