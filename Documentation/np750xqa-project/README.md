@@ -26,6 +26,9 @@ need to repeat the project history.
 5. [../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst](../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst)
    -- user-facing kernel build notes.
 
+The latest workstation build and validation results are recorded in
+[BUILD_RECORD.md](BUILD_RECORD.md).
+
 ## Current milestone
 
 The repository contains a conservative first-boot DTB, not a proven hardware
