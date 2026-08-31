@@ -26,6 +26,7 @@ ARM64 Architecture
     perf
     pointer-authentication
     ptdump
+    samsung-galaxy-book4-edge-x1p42100
     silicon-errata
     sme
     sve
