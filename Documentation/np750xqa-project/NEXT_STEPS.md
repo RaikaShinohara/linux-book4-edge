@@ -12,7 +12,7 @@ physical boot preparation if the kernel and DT schema do not validate cleanly.
 
 Clone the published branch onto a native, case-sensitive Linux filesystem::
 
-    git clone --branch codex/x1p42100-samsung-np750xqa \
+    git clone --branch codex/np750xqa-display \
         https://github.com/RaikaShinohara/linux-book4-edge.git
     cd linux-book4-edge
     git status --short --branch
@@ -115,10 +115,10 @@ Follow `TEST_PLAN.md`. The initial goal is only:
 6. The internal keyboard probes.
 7. Logs are saved for offline inspection.
 
-Only after those stages are repeatable should the project add touchpad,
-internal display, audio, EC, suspend or a desktop Arch environment.
+Only after those stages are repeatable should the project add touchpad, audio,
+EC, suspend, GPU acceleration or a desktop Arch environment.
 
-## 8. Current priority: early evidence and internal display
+## 8. Current priority: test the experimental internal display
 
 The first attempt reached GRUB, then lost the internal image. No delayed
 first-boot log was produced. For the next attempt:
@@ -126,11 +126,16 @@ first-boot log was produced. For the next attempt:
 1. Capture and sync `dmesg` during initramfs or immediately after mounting the
    external root; do not wait for `multi-user.target`.
 2. Make the systemd journal persistent on the removable root.
-3. Preserve the verbose `tty0` command line, while recognizing that it only
-   works if firmware simpledrm remains usable.
-4. Determine the exact NP750XQA eDP AUX, endpoint, backlight, regulator, GPIO
-   and sequencing data for the KDB `KD156N2030A03` panel.
-5. Enable `mdss_dp3` only when those facts are supported by NP750XQA evidence.
+3. Preserve the verbose `tty0` command line. MSM DRM, `panel-edp` and the eDP
+   PHY are now built in and should replace simpledrm with a native console.
+4. Build the display branch and install its `Image` and DTB together. Do not
+   reuse the previous kernel with the new DTB because its display drivers are
+   modules.
+5. Capture `drm.debug=0x1ff` output and verify the KDB EDID, AUX transactions,
+   link training, connector state and framebuffer-console hand-off.
+6. Treat missing brightness control separately from missing video. Do not add
+   a PWM, EC command or backlight GPIO without new NP750XQA evidence.
 
-The inherited CRD uses a different ATNA panel. Enabling it unchanged is not a
-valid display implementation and may apply an incorrect power sequence.
+The inherited CRD ATNA driver and its PMIC GPIO were removed. The current
+implementation uses the generic eDP driver and deliberately leaves the
+Samsung-specific PMIC backlight path undescribed.

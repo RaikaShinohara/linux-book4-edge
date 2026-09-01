@@ -63,7 +63,8 @@ UUID is selected.
 - No internal-UFS partition appears in `fstab` or the GRUB command line.
 - The ESP is listed as `noauto,ro`.
 - SSH and systemd-networkd are masked for the first boot.
-- Native internal display remains disabled in the DTB.
+- Native internal display is disabled in the DTB recorded here. A later
+  display-branch DTB is not yet installed on this medium.
 - A one-shot service stores first-boot diagnostics under
   `/var/log/np750xqa/` on the external root.
 - No firmware file, internal UFS sector, Windows EFI entry or laptop firmware

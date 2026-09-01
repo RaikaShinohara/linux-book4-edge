@@ -29,10 +29,10 @@ Keep this record on the workstation and on the removable log partition.
 - Do not include commands that repartition, format or automatically repair
   internal UFS.
 
-Native internal display is disabled, so the recovery image must not rely on a
-graphical console. Prefer multiple evidence paths: early console if available,
-EFI pstore, an initramfs log copied to removable media, and network logging only
-after the interface is known to be safe and functional.
+Native internal display is experimental, so the recovery image must not rely
+on it as the only evidence path. Prefer early console plus EFI pstore and an
+initramfs log copied to removable media. Add `drm.debug=0x1ff` for the first
+display test and use network logging only after the interface is known safe.
 
 ## Pre-boot checks
 

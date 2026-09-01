@@ -5,7 +5,6 @@ After=local-fs.target systemd-udev-settle.service
 
 [Service]
 Type=oneshot
-ExecStartPre=/usr/bin/sleep 60
 ExecStart=/usr/local/sbin/np750-firstboot-log
 RemainAfterExit=yes
 

@@ -4,7 +4,7 @@
 
 Continue the NP750XQA port. The kernel and recovery USB have been built and a
 first physical boot attempted. The next milestone is reliable early log
-capture, followed by evidence-based support for the internal KDB eDP panel.
+capture while testing the experimental internal KDB eDP implementation.
 Do not start by installing a desktop environment or writing Linux to internal
 UFS.
 
@@ -21,8 +21,9 @@ UFS.
 - Added the confirmed Samsung HID-over-I2C keyboard.
 - Removed inherited CRD keyboard, touchpad and touchscreen nodes that do not
   describe this machine.
-- Disabled native internal eDP and CAMSS until the Samsung-specific hardware
-  description is known.
+- Initially disabled native internal eDP and CAMSS rather than inheriting
+  incorrect CRD devices. CAMSS remains disabled; eDP is now an explicit,
+  experimental KDB implementation documented in `DISPLAY_BRINGUP.md`.
 - Enabled UFSHCD, the Qualcomm UFS glue and QMP UFS PHY as built-in options in
   `book4_defconfig`.
 - Added a theoretical support matrix to the repository root `README.md`.
@@ -32,8 +33,13 @@ UFS.
 - Performed the first physical test. GRUB was visible, but the panel went black
   after Linux was selected and the delayed logger produced no files. See
   `FIRST_BOOT_RESULT.md` for the exact evidence and its limits.
+- Replaced the inherited ATNA OLED node with a generic eDP panel for the KDB
+  `KD156N2030A03`, enabled `mdss_dp3`, disabled unconfirmed ATNA backlight
+  control and made the DRM, panel and eDP PHY drivers built in.
+- Disabled the Adreno GPU for the first display test so missing 3D firmware
+  cannot block the display-only MSM DRM path.
 
-## Validation already performed
+## Validation already performed for the first boot artifact
 
 - The DTS compiled with `dtc` 1.7.2.
 - The DTB was decompiled again successfully for a semantic round trip.
@@ -53,15 +59,29 @@ The build and schema validation recorded in `BUILD_RECORD.md` completed. The
 DTB was boot-attempted on the physical machine, but there is not yet a kernel
 log proving how far execution progressed.
 
+## Validation performed for the display source
+
+The new display DTB was preprocessed and compiled with `dtc` 1.7.2, then
+decompiled successfully. Assertions confirmed enabled DP3, generic
+`edp-panel`, retained panel supply and endpoint, `no-hpd`, removal of the ATNA
+enable/pinctrl properties, and disabled GPU. Its size is 213348 bytes and its
+SHA-256 is
+`CC445BB69E707EC737E39EE3898CFA1A58022DF06FB0BF59443E9D2F579478D8`.
+This DTB has not been physically tested, and a complete kernel has not been
+built from the display branch on this Windows machine.
+
 ## Immediate continuation order
 
-1. Replace the delayed first-boot logger with initramfs/early-userspace capture
-   that syncs incremental evidence to the removable root.
+1. Extend logging into initramfs/early userspace so it syncs incremental
+   evidence to the removable root. The 60-second delay was removed from the
+   recovery service, but that service still depends on reaching userspace.
 2. Enable persistent journald storage for later userspace evidence.
 3. Repeat the removable-media test and recover logs before claiming UFS,
    keyboard or userspace support.
-4. Investigate the exact KDB `KD156N2030A03` eDP topology and power sequence.
-   Do not enable the inherited ATNA CRD panel description as a shortcut.
+4. Rebuild from the display branch, update the removable kernel and DTB as a
+   matched pair, and test whether the KDB EDID is read over AUX.
+5. If video appears but brightness control does not, capture DRM and backlight
+   sysfs evidence before adding any PWM or GPIO assumption.
 
 ## Hard constraints
 

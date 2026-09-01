@@ -8,8 +8,9 @@
 4. Use Samsung's one-time firmware boot menu and select the removable USB. Do
    not create a permanent boot entry.
 5. In GRUB, select `NP750XQA recovery Linux (read-only first mount)`.
-6. The internal display is not supported by this DTB. Lack of an image after
-   GRUB is therefore not by itself a kernel failure. Do not repeatedly reboot.
+6. The internal display is experimental. The new kernel should hand the console
+   from simpledrm to MSM DRM after reading the KDB EDID. A black screen is still
+   not proof of a kernel hang; do not repeatedly reboot.
 7. Allow several minutes for the first boot and log capture. Stop immediately
    for abnormal heat, fan, smell, charging behaviour, repeated resets or an
    apparent UFS power-cycle loop.

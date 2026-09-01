@@ -37,7 +37,8 @@ The initial Device Tree provides:
 * the NP750XQA model and compatible strings;
 * the internal UFS controller, PHY and confirmed regulator assignments; and
 * the keyboard at I2C address ``0x05``, HID descriptor address ``0x20`` and
-  TLMM interrupt 67.
+  TLMM interrupt 67; and
+* an experimental generic eDP description for the KDB ``KD156N2030A03`` panel.
 
 The keyboard interrupt mapping is supported by the matching Samsung ACPI GPIO
 resource and the existing X1E80100 Galaxy Book4 Edge Device Tree.
@@ -48,8 +49,9 @@ Deliberately deferred hardware
 The following devices remain disabled or undescribed until their board data is
 confirmed:
 
-* The internal panel is not the ATNA panel from ``x1-crd.dtsi``. The inherited
-  eDP controller therefore remains disabled.
+* Backlight control for the internal panel is not confirmed. The generic eDP
+  path can read EDID and train the link, but brightness may remain at the
+  firmware-selected level.
 * The CRD camera sensor does not describe the NP750XQA camera path, so CAMSS is
   disabled.
 * The touchpad is present at I2C address ``0x40`` on ``i2c13``. Its HID
@@ -82,9 +84,10 @@ Build the kernel and modules with the same configuration::
 
     make O=out ARCH=arm64 LLVM=1 -j"$(nproc)" Image modules
 
-``book4_defconfig`` builds the UFS host, Qualcomm UFS glue and QMP UFS PHY into
-the kernel so a recovery initramfs can discover internal storage without those
-drivers already being available as modules.
+``book4_defconfig`` builds the UFS host, Qualcomm UFS glue, QMP UFS PHY, MSM
+DRM, generic eDP panel driver and Qualcomm eDP PHY into the kernel. This lets a
+recovery initramfs discover storage and obtain a framebuffer console without
+requiring those drivers as modules.
 
 Initial boot policy
 ===================

@@ -31,10 +31,14 @@ excluded.
 - Panel text: `KD156N2030A03`.
 - Native mode: 1920x1080 at approximately 60 Hz.
 - Size: 15.6 inches, approximately 34 x 19 cm.
-- This is not the ATNA panel inherited from the X1 CRD, so `mdss_dp3` is
-  disabled in the initial DTS.
-- A firmware framebuffer may remain visible early in boot, but native panel
-  support is not implemented.
+- The DSDT panel profile selects eDP, dynamic EDID/DPCD reads, active-high HPD,
+  zero milliseconds of power-up wait and a 19.2 kHz, 9-bit PMIC backlight.
+- DSDT power resources vote the DP3 clocks and the 1.2 V/0.8 V PHY rails.
+- The ATNA panel inherited from the X1 CRD is incompatible. The experimental
+  DTS replaces only that panel with `edp-panel`, retains the standard X1 eDP
+  controller, PHY and 3.3 V rail, and removes the ATNA backlight-enable GPIO.
+- Native video and backlight control remain untested. The generic driver may
+  preserve the firmware-selected brightness even if Linux cannot adjust it.
 
 ## Input and EC
 

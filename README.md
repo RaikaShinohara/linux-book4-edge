@@ -35,19 +35,22 @@ Device Tree and kernel configuration, not tested hardware support.
 - **PCIe and Wi-Fi enumeration:** the relevant PCIe controllers are enabled.
   FastConnect 7800 should be usable after confirming the correct PCIe path and
   installing the matching Qualcomm firmware and board data.
-- **GPU probe:** the Adreno GPU node is enabled and should probe with the
-  correct firmware. This does not imply that the internal display works;
-  recent Mesa and the matching GPU firmware will also be required.
 - **ADSP and CDSP:** both remote processors are enabled in the inherited base
   and should start when the matching firmware is installed.
 - **Firmware framebuffer:** it may keep the internal panel visible during early
   boot, before the Linux display driver takes ownership. This is firmware
   dependent and is not a replacement for native panel support.
+- **Experimental internal display:** the KDB `KD156N2030A03` is now described
+  as a generic eDP panel on `mdss_dp3`. MSM DRM, the generic eDP panel driver
+  and the Qualcomm eDP PHY are built in so the framebuffer console can appear
+  before the external root is mounted. This has not yet been physically tested;
+  backlight control may remain unavailable.
 
 ### Deliberately disabled or still pending
 
-- **Internal display:** native eDP is disabled because the NP750XQA uses a KDB
-  `KD156N2030A03` panel rather than the ATNA panel described by the CRD.
+- **GPU acceleration:** the Adreno GPU is disabled for the first native-display
+  test. This isolates MSM DPU/eDP scanout from missing GPU firmware; it must be
+  re-enabled and validated separately before expecting accelerated graphics.
 - **Touchpad:** the Zinitix device is known to be at `0x40` on `i2c13`, but its
   HID descriptor address comes from a runtime ACPI NVS value and has not been
   guessed.

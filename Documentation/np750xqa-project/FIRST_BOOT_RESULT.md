@@ -8,10 +8,12 @@ visible and the experimental Linux entry was selected. After control passed to
 Linux, the internal panel went black. The machine did not visibly return to
 firmware or Windows and required a prolonged power-off action.
 
-This is consistent with the documented display limitation and is not, by
-itself, proof of a kernel hang. Native internal eDP remains disabled in the
-NP750XQA DTB because the factory KDB `KD156N2030A03` panel is not described by
-the inherited Qualcomm CRD panel data.
+This is consistent with the display limitation in the artifact that was
+tested and is not, by itself, proof of a kernel hang. Native internal eDP was
+disabled in that DTB because the factory KDB `KD156N2030A03` panel is not
+described by the inherited Qualcomm CRD panel data. The later
+`codex/np750xqa-display` branch enables an experimental generic eDP path; this
+historical result must not be treated as a test of that implementation.
 
 ## Offline USB inspection
 
