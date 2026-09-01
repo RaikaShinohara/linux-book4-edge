@@ -40,5 +40,10 @@ port. It is intended to reach a recovery initramfs with USB, internal UFS and
 the internal keyboard. Native internal display, touchpad and camera support are
 deliberately deferred.
 
+The first physical recovery-USB attempt and the resulting black-screen/offline
+inspection are documented in `FIRST_BOOT_RESULT.md`. No kernel log was
+recovered, so the current boot depth remains unproven. Early log capture and
+the exact KDB internal-panel description are the next work items.
+
 No firmware, partition, UFS content or Windows boot entry was modified while
 creating this work.

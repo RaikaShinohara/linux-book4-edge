@@ -2,10 +2,11 @@
 
 ## Objective
 
-Continue the NP750XQA port on the user's Arch Linux x86-64 workstation. The
-next milestone is a reproducible ARM64 kernel build and a non-destructive
-recovery boot that produces complete logs. Do not start by installing a
-desktop environment or writing Linux to internal UFS.
+Continue the NP750XQA port. The kernel and recovery USB have been built and a
+first physical boot attempted. The next milestone is reliable early log
+capture, followed by evidence-based support for the internal KDB eDP panel.
+Do not start by installing a desktop environment or writing Linux to internal
+UFS.
 
 ## Work already completed
 
@@ -25,6 +26,12 @@ desktop environment or writing Linux to internal UFS.
 - Enabled UFSHCD, the Qualcomm UFS glue and QMP UFS PHY as built-in options in
   `book4_defconfig`.
 - Added a theoretical support matrix to the repository root `README.md`.
+- Built the complete kernel, modules and DTB with LLVM; see `BUILD_RECORD.md`.
+- Created and validated an Arch Linux ARM recovery USB; see
+  `USB_RECOVERY_RECORD.md`.
+- Performed the first physical test. GRUB was visible, but the panel went black
+  after Linux was selected and the delayed logger produced no files. See
+  `FIRST_BOOT_RESULT.md` for the exact evidence and its limits.
 
 ## Validation already performed
 
@@ -42,8 +49,19 @@ desktop environment or writing Linux to internal UFS.
   `CONFIG_SCSI_UFS_QCOM=y`, `CONFIG_PHY_QCOM_QMP=y` and
   `CONFIG_PHY_QCOM_QMP_UFS=y`.
 
-The complete kernel was not built and the DTB was not booted on the physical
-machine.
+The build and schema validation recorded in `BUILD_RECORD.md` completed. The
+DTB was boot-attempted on the physical machine, but there is not yet a kernel
+log proving how far execution progressed.
+
+## Immediate continuation order
+
+1. Replace the delayed first-boot logger with initramfs/early-userspace capture
+   that syncs incremental evidence to the removable root.
+2. Enable persistent journald storage for later userspace evidence.
+3. Repeat the removable-media test and recover logs before claiming UFS,
+   keyboard or userspace support.
+4. Investigate the exact KDB `KD156N2030A03` eDP topology and power sequence.
+   Do not enable the inherited ATNA CRD panel description as a shortcut.
 
 ## Hard constraints
 

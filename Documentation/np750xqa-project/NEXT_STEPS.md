@@ -1,4 +1,9 @@
-# Expected next steps on the Arch workstation
+# Expected next steps after the first physical boot
+
+> Historical note: phases 1 through 6 below were completed on the Arch
+> workstation. Build and USB details are in `BUILD_RECORD.md` and
+> `USB_RECOVERY_RECORD.md`. The first physical result is recorded in
+> `FIRST_BOOT_RESULT.md`.
 
 The next AI agent should execute these phases in order. It should stop before
 physical boot preparation if the kernel and DT schema do not validate cleanly.
@@ -112,3 +117,20 @@ Follow `TEST_PLAN.md`. The initial goal is only:
 
 Only after those stages are repeatable should the project add touchpad,
 internal display, audio, EC, suspend or a desktop Arch environment.
+
+## 8. Current priority: early evidence and internal display
+
+The first attempt reached GRUB, then lost the internal image. No delayed
+first-boot log was produced. For the next attempt:
+
+1. Capture and sync `dmesg` during initramfs or immediately after mounting the
+   external root; do not wait for `multi-user.target`.
+2. Make the systemd journal persistent on the removable root.
+3. Preserve the verbose `tty0` command line, while recognizing that it only
+   works if firmware simpledrm remains usable.
+4. Determine the exact NP750XQA eDP AUX, endpoint, backlight, regulator, GPIO
+   and sequencing data for the KDB `KD156N2030A03` panel.
+5. Enable `mdss_dp3` only when those facts are supported by NP750XQA evidence.
+
+The inherited CRD uses a different ATNA panel. Enabling it unchanged is not a
+valid display implementation and may apply an incorrect power sequence.
