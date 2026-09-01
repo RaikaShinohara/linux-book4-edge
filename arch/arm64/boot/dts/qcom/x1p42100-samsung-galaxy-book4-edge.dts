@@ -44,12 +44,29 @@
 };
 
 /*
- * The factory panel is a KDB KD156N2030A03, not the ATNA panel described by
- * x1-crd.dtsi. Keep the DP controller off until its power/reset sequence is
- * represented accurately; the firmware framebuffer remains the early-console
- * path for the first boot.
+ * The factory KDB KD156N2030A03 exposes a valid EDID and uses the standard
+ * eDP AUX path. Replace the non-standard ATNA panel inherited from the CRD
+ * with the generic eDP panel driver. The panel's ACPI profile reports no
+ * power-up delay and the HPD input is not exposed as a confirmed board GPIO,
+ * so use AUX discovery without waiting for a separate HPD signal.
  */
 &mdss_dp3 {
+	status = "okay";
+
+	aux-bus {
+		panel {
+			compatible = "edp-panel";
+			/delete-property/ enable-gpios;
+			/delete-property/ pinctrl-0;
+			/delete-property/ pinctrl-names;
+
+			no-hpd;
+		};
+	};
+};
+
+/* Keep 3D acceleration out of the first display test; its firmware is absent. */
+&gpu {
 	status = "disabled";
 };
 
