@@ -73,3 +73,27 @@ UUID is selected.
 Secure Boot must be disabled for this experimental first boot because GRUB
 does not allow its `devicetree` command while lockdown is enforced. Select the
 USB only from the laptop's one-time firmware boot menu.
+
+## Display-test update (2026-09-01)
+
+The same positively identified and unmounted 8 GB removable device was updated
+in place for the experimental display test. It was not repartitioned. The
+previous kernel, DTB, initramfs and EFI loader were retained with a
+`.firstboot` suffix and are selectable through the GRUB entry
+`NP750XQA previous kernel (display disabled)`.
+
+Installed display-test artifacts:
+
+- `boot/Image-np750xqa` SHA-256:
+  `0b96cc5dfb140f8fca37fb8c9fba723a593493cf28c4a409071ed030ef6fcfd3`
+- display DTB SHA-256:
+  `cc445bb69e707ec737e39ee3898cfa1a58022df06fb0bf59443e9d2f579478d8`
+- `boot/initramfs-np750xqa.img` SHA-256:
+  `6a03df5e38715f5172c3a1bca443413c8629d243a5c91911eba00e3e05999563`
+- `EFI/BOOT/BOOTAA64.EFI` SHA-256:
+  `d10561c49026b959edbcbac36cd1a72c125121a40e6d3585d4c806df7096cf95`
+
+The embedded GRUB configuration enables `drm.debug=0x1ff`. The rebuilt
+initramfs contains the explicit Qualcomm USB PHY, DWC3 and XHCI platform
+modules. The 60-second logging delay is removed, `/var/log/journal` is enabled
+for persistent journals and `/var/log/np750xqa` is created in advance.

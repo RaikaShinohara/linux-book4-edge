@@ -98,3 +98,38 @@ No removable or internal storage, EFI entry, firmware setting, proprietary
 firmware or physical NP750XQA device was changed. Recovery-root and bootloader
 packaging still require selecting an actual removable target and confirming
 the Samsung UEFI DTB hand-off mechanism before any media is written.
+
+## Experimental display build (2026-09-01)
+
+The display branch was built and schema-validated on the Arch workstation.
+The initial display defconfig requested `CONFIG_DRM_MSM=y`, but Kconfig reduced
+it to `m` because `QCOM_AOSS_QMP`, `QCOM_LLCC` and `QCOM_OCMEM` were modules.
+Those three dependencies were changed to built-in so MSM DRM and its selected
+DRM helpers genuinely resolve to `y`.
+
+The following all resolve built-in in the installed configuration:
+
+```text
+CONFIG_DRM_MSM=y
+CONFIG_DRM_EXEC=y
+CONFIG_DRM_GPUVM=y
+CONFIG_DRM_SCHED=y
+CONFIG_DRM_PANEL_EDP=y
+CONFIG_PHY_QCOM_EDP=y
+CONFIG_QCOM_AOSS_QMP=y
+CONFIG_QCOM_LLCC=y
+CONFIG_QCOM_OCMEM=y
+```
+
+Both targeted `dt_binding_check` and `CHECK_DTBS=y` completed successfully with
+dtschema 2026.6. The complete `Image` and module build also completed.
+
+- Kernel release: `6.17.0-rc4+`
+- `Image` SHA-256:
+  `0b96cc5dfb140f8fca37fb8c9fba723a593493cf28c4a409071ed030ef6fcfd3`
+- NP750XQA display DTB SHA-256:
+  `cc445bb69e707ec737e39ee3898cfa1a58022df06fb0bf59443e9d2f579478d8`
+- Resolved `.config` SHA-256:
+  `739226877eb80d1cf48e5335185335663cafa40b73928ca121ab6591b351b30e`
+- Sorted module manifest SHA-256:
+  `a18beeaef93441de099d9201acad22ccaeaf218d5a9ee514454aa8bb07700a48`
