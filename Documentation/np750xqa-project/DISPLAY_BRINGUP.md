@@ -53,6 +53,67 @@ This validates the Device Tree structure only. The full kernel, resolved
 Kconfig and DT schemas still have to be built on the Arch workstation, and no
 physical display result has been claimed.
 
+## Build the display kernel on Arch Linux
+
+Use a native, case-sensitive Linux filesystem. Start from the published
+display branch and do not reuse `Image`, modules or the DTB from the earlier
+first-boot artifact:
+
+```sh
+git clone --branch codex/np750xqa-display \
+    https://github.com/RaikaShinohara/linux-book4-edge.git
+cd linux-book4-edge
+
+make O=out ARCH=arm64 LLVM=1 book4_defconfig
+grep -E 'CONFIG_(DRM_MSM|DRM_PANEL_EDP|PHY_QCOM_EDP)=' out/.config
+
+make O=out ARCH=arm64 LLVM=1 -j"$(nproc)" \
+    Image modules qcom/x1p42100-samsung-galaxy-book4-edge.dtb
+```
+
+All three queried display options must resolve to `y`. Validate the board
+schema and resolved DTB before installing anything:
+
+```sh
+make O=out ARCH=arm64 LLVM=1 \
+    DT_SCHEMA_FILES=qcom.yaml dt_binding_check
+make O=out ARCH=arm64 LLVM=1 CHECK_DTBS=y \
+    DT_SCHEMA_FILES=qcom.yaml \
+    qcom/x1p42100-samsung-galaxy-book4-edge.dtb
+
+sha256sum out/arch/arm64/boot/Image \
+    out/arch/arm64/boot/dts/qcom/x1p42100-samsung-galaxy-book4-edge.dtb \
+    out/.config
+```
+
+The two boot artifacts are:
+
+- `out/arch/arm64/boot/Image`
+- `out/arch/arm64/boot/dts/qcom/x1p42100-samsung-galaxy-book4-edge.dtb`
+
+Install the new `Image`, its modules and this DTB as one matched set on the
+removable recovery system. Keep the previous working files as a fallback and
+verify the external mount path before copying. Do not write to internal UFS or
+change the permanent Windows EFI entry.
+
+## Expected boot sequence
+
+1. Samsung UEFI and GRUB should remain visible using the firmware framebuffer.
+2. GRUB loads the new `Image`, recovery initramfs and matching NP750XQA DTB.
+3. `simpledrm` can initially keep using the UEFI framebuffer while the built-in
+   Qualcomm display stack probes.
+4. MSM DRM enables DP3 and its PHY, powers the inherited 3.3 V panel rail and
+   asks `panel-edp` to read the KDB EDID over AUX.
+5. If AUX and link training succeed, MSM DRM exposes the preferred 1920x1080
+   mode and `fbcon` replaces the firmware console with the native console.
+6. The external root should mount read-only first, userspace should start and
+   the logger should collect evidence without the previous 60-second delay.
+
+The useful success criterion is readable console text, not a graphical
+desktop. Adreno acceleration is deliberately disabled. Video may work at a
+fixed firmware-selected brightness because the Samsung PMIC backlight control
+is not yet described.
+
 ## Expected observations
 
 The best result is a visible framebuffer console and a log showing:

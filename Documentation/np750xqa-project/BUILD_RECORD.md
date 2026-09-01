@@ -1,5 +1,11 @@
 # Reproducible build record
 
+> This is the historical build used for the first physical attempt. It does
+> not contain the later experimental display implementation. Build
+> `codex/np750xqa-display` using
+> [DISPLAY_BRINGUP.md](DISPLAY_BRINGUP.md) and replace its `Image`, modules and
+> DTB together for the next test.
+
 Build completed on 2026-08-31 on the Arch Linux x86-64 workstation.
 
 ## Source and toolchain
