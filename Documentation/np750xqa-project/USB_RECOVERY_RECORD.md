@@ -257,3 +257,19 @@ focused entries no longer request a premount break.
   `e5c4f10e43bddadbc10b9becdbdc5aaa28d987d41e1bfa8ac297c67f3529080f`
 - loader with embedded automatic-log initramfs SHA-256:
   `15019077ac5733594c5f7e9c7394918bb253b131dd4a1e89134db800211cb04c`
+
+No automatic file was present after that test, proving that the LED flashes
+were controller retries rather than successful block-device enumeration. The
+last readable deferred-probe report identifies the direct chain:
+`a400000.usb` waits for `88e5000.phy`, and that SuperSpeed PHY reports
+`Failed to get supply 'vdda-phy'`. The recovery stick is USB 2.0, so the next
+recovery DTB limits the multiport DWC3 node to its two USB2 PHYs and high-speed
+operation. It also leaves the USB-A repeater in its UEFI-configured state for
+this diagnostic instead of blocking the USB2 PHY on the still-deferred
+PTN3222 regulator path. These recovery-only overrides do not alter the normal
+board DTB.
+
+- USB2-only recovery DTB SHA-256:
+  `e20399659c747b5ed87af1873f192f58b84cc09d2274ac8dc5cde2822b76d4fa`
+- loader embedding the USB2-only recovery DTB SHA-256:
+  `a18c8e9c5f6eb54957e2deff21d3db008b58d8877d893c8e48fd2d5394f4789a`

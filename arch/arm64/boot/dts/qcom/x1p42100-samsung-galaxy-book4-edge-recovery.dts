@@ -21,3 +21,23 @@
 &pmk8550_pwm {
 	status = "disabled";
 };
+
+/*
+ * The recovery stick is USB 2.0.  Do not make the whole multiport DWC3 wait
+ * for the SuperSpeed QMP PHYs: the diagnostic trace shows a400000.usb blocked
+ * specifically by 88e5000.phy while its vdda-phy regulator is unavailable.
+ */
+&usb_mp_dwc3 {
+	phys = <&usb_mp_hsphy0>, <&usb_mp_hsphy1>;
+	phy-names = "usb2-0", "usb2-1";
+	maximum-speed = "high-speed";
+};
+
+/* Preserve the USB-A repeater state established by UEFI for this test. */
+&usb_mp_hsphy1 {
+	/delete-property/ phys;
+};
+
+&usb_a_eusb_repeater {
+	status = "disabled";
+};
