@@ -1,0 +1,24 @@
+#!/usr/bin/ash
+
+run_earlyhook() {
+    echo
+    echo "============================================================"
+    echo "NP750XQA EARLY INITRAMFS SHELL"
+    echo "The kernel reached /init. USB root is not required for this shell."
+    echo "Useful commands:"
+    echo "  cat /proc/cmdline"
+    echo "  cat /sys/kernel/debug/devices_deferred"
+    echo "  dmesg | grep -Ei 'usb|dwc3|xhci|eusb|ptn|888000|a400000'"
+    echo "  ls -l /dev/sd* /dev/disk/by-uuid 2>/dev/null"
+    echo "Type exit to continue to udev and the premount shell."
+    echo "============================================================"
+    echo
+
+    if [ -r /sys/kernel/debug/devices_deferred ]; then
+        echo "Deferred devices before initramfs hooks:"
+        cat /sys/kernel/debug/devices_deferred
+        echo
+    fi
+
+    launch_interactive_shell
+}

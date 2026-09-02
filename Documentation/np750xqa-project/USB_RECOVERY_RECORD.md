@@ -217,3 +217,16 @@ initcalls.
 
 - focused deferred-probe loader SHA-256:
   `ce77681304f2119e2578693100c93a4762013c6e84b6202e8c6704581f6886a4`
+
+The focused video proves the kernel completes initcalls, reports
+`Run /init as init process`, and begins executing mkinitcpio's `/init`. The
+existing `break=premount` occurs only after all regular hooks, so it was too
+late to guarantee a visible prompt. The `np750earlybreak` hook now opens an
+interactive console at `run_earlyhook`, before udev, module loading and the
+block hook. It also prints the deferred-device list automatically when debugfs
+provides it.
+
+- early-break initramfs SHA-256:
+  `4533713a84dcb0ae4e5add0df2b145789d0ae34e067e90409bb33324e5f1b365`
+- loader with embedded early-break initramfs SHA-256:
+  `277630401a94e6beba9804b18d2f781de43245425eb7cfb0e6fff5cdd53ebf4e`
