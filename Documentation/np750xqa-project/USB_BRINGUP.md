@@ -37,21 +37,38 @@ I2C controller and the Synopsys eUSB2 PHY modules. If those drivers are modules,
 Linux can need the USB root in order to load the drivers needed to find that
 same root.
 
-`book4_defconfig` therefore requests the complete USB-root chain built in:
+The first version of this fix still left several providers as modules. That is
+not safe for a USB root: DWC3 requests the X1E80100 interconnect paths, both
+eUSB2 PHYs request clocks from GCC and TCSR, the PTN3222 needs TLMM GPIO7 and
+RPMh regulators, and QUP may expose I2C18 only through GPI DMA when its FIFO
+interface is disabled by firmware. Any one of those missing providers can
+defer the probe before the initramfs can see the removable root.
+
+`book4_defconfig` therefore requests the complete dependency chain built in:
 
 ```text
+CONFIG_CLK_X1E80100_GCC=y
+CONFIG_CLK_X1E80100_TCSRCC=y
+CONFIG_PINCTRL_X1E80100=y
+CONFIG_REGULATOR_QCOM_RPMH=y
+CONFIG_INTERCONNECT_QCOM_X1E80100=y
+CONFIG_QCOM_GPI_DMA=y
 CONFIG_I2C_QCOM_GENI=y
 CONFIG_PHY_SNPS_EUSB2=y
 CONFIG_PHY_NXP_PTN3222=y
 CONFIG_PHY_QCOM_QMP_USB=y
 CONFIG_USB_DWC3=y
 CONFIG_USB_DWC3_QCOM=y
+CONFIG_USB_XHCI_HCD=y
 CONFIG_USB_XHCI_PLATFORM=y
 ```
 
 USB storage, UAS, SCSI disk and ext4 were already built in. The recovery
 mkinitcpio template also names all relevant modules explicitly so that it
 remains useful if a future configuration changes any of them back to modules.
+HID, HID-over-I2C and USB HID are now built in too, so the internal keyboard or
+an external keyboard can operate the premount diagnostic shell without first
+mounting the root filesystem.
 
 ## Build and verify on Arch Linux
 
@@ -62,14 +79,16 @@ make O=out ARCH=arm64 LLVM=1 book4_defconfig
 make O=out ARCH=arm64 LLVM=1 -j"$(nproc)" \
   qcom/x1p42100-samsung-galaxy-book4-edge.dtb Image modules
 
-grep -E '^CONFIG_(I2C_QCOM_GENI|PHY_SNPS_EUSB2|PHY_NXP_PTN3222|PHY_QCOM_QMP_USB|USB_DWC3|USB_DWC3_QCOM|USB_XHCI_PLATFORM)=y$' \
+sh Documentation/np750xqa-project/recovery/check-usb-root-config.sh \
   out/.config
 ```
 
-The `grep` command must print all seven symbols. Then run the existing schema
-checks and record SHA-256 hashes for `Image`, the DTB and `.config`. Install
-the kernel, DTB and any remaining modules as one matched set. Rebuild the
-initramfs using
+The checker must report all 21 symbols as built in. It covers the clock,
+pinctrl, regulator, interconnect, optional I2C DMA, controller, PHY, block,
+filesystem and diagnostic-keyboard paths. Then run the existing schema checks
+and record SHA-256 hashes for `Image`, the DTB and `.config`. Install the
+kernel, DTB and any remaining modules as one matched set. Rebuild the initramfs
+using
 `Documentation/np750xqa-project/recovery/mkinitcpio-np750xqa.conf`, and replace
 the removable GRUB configuration with the repository template while retaining
 the previous artifacts as a fallback.
@@ -77,6 +96,11 @@ the previous artifacts as a fallback.
 Before booting, use `lsinitcpio` to confirm the initramfs was produced for the
 new kernel release. A built-in driver will appear in the kernel rather than as
 a `.ko` inside the archive; that is expected.
+
+The updated defconfig was resolved with the kernel's Kconfig tools on AArch64
+on 2026-09-02, and all 21 checks passed. This validates the dependency choices;
+it is not a substitute for compiling the matched `Image`, modules and DTB on
+the Arch workstation.
 
 ## First diagnostic entry
 
@@ -96,8 +120,11 @@ cat /run/initramfs/init.log
 
 Expected evidence is a successful PTN3222 probe on `i2c@888000`, XHCI at
 `0x0a400000`, a USB mass-storage device and the external root UUID. Type
-`exit` to let mkinitcpio mount the root and continue. Because this entry stops
-before mounting, an idle USB LED while sitting at its shell is normal.
+`exit` to let mkinitcpio mount the root and continue. The first-boot logger now
+copies `/run/initramfs/init.log` to
+`/var/log/np750xqa/<UTC timestamp>/initramfs-init.log` after the root mounts,
+alongside `dmesg`, the journal and a USB sysfs inventory. Because this entry
+stops before mounting, an idle USB LED while sitting at its shell is normal.
 
 If the screen still goes black, watch the recovery-stick LED. Activity that
 resumes after the kernel starts is useful evidence that Linux reacquired the

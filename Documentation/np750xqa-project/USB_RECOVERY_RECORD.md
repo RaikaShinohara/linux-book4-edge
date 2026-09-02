@@ -109,13 +109,17 @@ for persistent journals and `/var/log/np750xqa` is created in advance.
 
 The lack of logs is now treated as possible failure to reacquire the recovery
 stick after the UEFI hand-off. The repository DTS replaces the inherited CRD
-repeater association with the NP750XQA `i2c18:0x4f`/GPIO7 path, and
-`book4_defconfig` makes the whole USB-root chain built in. The mkinitcpio
-template now correctly names `phy-nxp-ptn3222` and also lists GENI I2C and the
-Synopsys eUSB2 PHY.
+repeater association with the NP750XQA `i2c18:0x4f`/GPIO7 path. A second audit
+found that the initial fix still left essential clock, pinctrl, regulator and
+interconnect providers as modules, and omitted GPI DMA. `book4_defconfig` now
+makes those providers and the complete USB-root chain built in. The mkinitcpio
+template names the same provider chain defensively as well as the correct
+`phy-nxp-ptn3222`, GENI I2C and Synopsys eUSB2 drivers.
 
 The GRUB template defaults to a `break=premount` USB diagnostic with
-`rd.log=all`. These changes have not been copied to the removable drive in this
-Windows session. Build and installation instructions, expected observations
-and the distinction between confirmed ACPI data and inferred port pairing are
-in `USB_BRINGUP.md`.
+`rd.log=all`. The diagnostic keyboard transports are built in, and the
+first-boot logger copies the initramfs log to the external root after it mounts.
+These changes have not been copied to the removable drive in this Windows
+session. Build and installation instructions, expected observations and the
+distinction between confirmed ACPI data and inferred port pairing are in
+`USB_BRINGUP.md`.

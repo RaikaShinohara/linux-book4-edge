@@ -32,10 +32,12 @@ describe what is expected from the current Device Tree and kernel configuration.
   the Samsung firmware resources.
 - **USB-A recovery path:** the multiport DWC3/XHCI controller is enabled and
   its second eUSB2 PHY now uses the NP750XQA ACPI topology: PTN3222 at
-  `i2c18:0x4f`, reset by TLMM GPIO7. The complete USB-root driver chain is
-  built in. This is intended to fix loss of the recovery stick after the UEFI
-  hand-off, but remains unconfirmed until a physical boot produces logs. The
-  exact Samsung Type-C retimer and connector routing is not confirmed yet.
+  `i2c18:0x4f`, reset by TLMM GPIO7. The complete USB-root driver chain,
+  including its GCC/TCSR clocks, TLMM, RPMh regulators, interconnect and GPI
+  DMA providers, is built in. This is intended to fix loss of the recovery
+  stick after the UEFI hand-off, but remains unconfirmed until a physical boot
+  produces logs. The exact Samsung Type-C retimer and connector routing is not
+  confirmed yet.
 - **PCIe and Wi-Fi enumeration:** the relevant PCIe controllers are enabled.
   FastConnect 7800 should be usable after confirming the correct PCIe path and
   installing the matching Qualcomm firmware and board data.

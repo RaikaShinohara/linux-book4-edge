@@ -52,10 +52,13 @@ UFS.
   disables the inherited `i2c5:0x4f`/GPIO184 PTN3222 and connects
   `usb_mp_hsphy1` to `i2c18:0x4f`/GPIO7, matching the second USB3 ACPI
   repeater resource. See `USB_BRINGUP.md`.
-- Made the complete USB-A root chain built in and corrected the recovery
-  initramfs list to use `phy-nxp-ptn3222`. Added a default premount-shell GRUB
-  entry with full early-userspace logging. These functional changes are commit
-  `25c1771b1`.
+- Made the USB-A controller and PHY chain built in and corrected the recovery
+  initramfs list to use `phy-nxp-ptn3222`. A follow-up audit also made GCC,
+  TCSR, TLMM, RPMh regulators, X1E80100 interconnect and GPI DMA built in;
+  those providers can otherwise defer I2C18 or DWC3 before the USB root exists.
+  HID-over-I2C and USB HID are built in for the premount shell. Added a default
+  premount-shell GRUB entry with full early-userspace logging and a reproducible
+  configuration checker.
 
 ## Validation already performed for the first boot artifact
 
@@ -102,8 +105,8 @@ Linux or tested on the physical machine.
 ## Immediate continuation order
 
 1. Read `USB_BRINGUP.md`, build the current branch on the Arch workstation and
-   confirm all seven USB-root Kconfig options plus the display/backlight
-   options resolve to `y`.
+   run `recovery/check-usb-root-config.sh out/.config`. Confirm all 21 checked
+   options plus the display/backlight options resolve to `y`.
 2. Install the resulting Image, modules and DTB as one matched set on the
    removable recovery system; preserve the previous entries and artifacts.
 3. Boot `NP750XQA USB-A premount shell (diagnostic)` first. Confirm PTN3222,

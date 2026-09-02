@@ -167,7 +167,12 @@ repeater and the `usb_mp_hsphy1` phandle link.
 - DTB SHA-256:
   `16cdcd18574c7c3d536ccfb0536c7e22dcecac0ad308bdbd3e823ee803d36c5e`
 
-The Windows MSYS2 Kconfig attempt did not complete and was terminated without
-producing `.config`. A native Arch build must still confirm the seven USB-root
-symbols resolve to `y`, run schema validation and produce the final Image,
-DTB, initramfs and configuration hashes before recovery media is updated.
+The initial Windows MSYS2 Kconfig attempt did not complete. During the
+follow-up USB dependency audit, `book4_defconfig` was resolved successfully
+with the kernel's own Kconfig tools in a native AArch64 WSL environment. The
+21 USB-root and diagnostic-console checks in
+`recovery/check-usb-root-config.sh` all resolved to `y`, including GCC, TCSR,
+TLMM, RPMh regulator, interconnect and GPI DMA providers that the first fix
+had still left modular or unset. A native Arch build must still run schema
+validation and produce the final Image, DTB, initramfs and configuration
+hashes before recovery media is updated.

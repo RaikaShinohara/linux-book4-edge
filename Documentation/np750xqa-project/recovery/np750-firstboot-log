@@ -19,6 +19,13 @@ find /sys/class/scsi_host /sys/class/scsi_disk /sys/class/block -maxdepth 3 \
     -type f -print >"$dest/storage-sysfs-files.txt" 2>&1 || true
 journalctl -b --no-pager >"$dest/journal.txt" 2>&1 || true
 
+if [ -f /run/initramfs/init.log ]; then
+    cp /run/initramfs/init.log "$dest/initramfs-init.log" || true
+fi
+
+find /sys/bus/usb/devices -maxdepth 2 -type f -print \
+    >"$dest/usb-sysfs-files.txt" 2>&1 || true
+
 for pstore_file in /sys/fs/pstore/*; do
     [ -f "$pstore_file" ] || continue
     cp "$pstore_file" "$dest/" || true

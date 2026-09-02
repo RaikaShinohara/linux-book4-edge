@@ -125,8 +125,10 @@ Linux output and then became black. No saved log proves whether boot continued.
 For the next attempt:
 
 1. Read `USB_BRINGUP.md`. Build the latest branch and install its `Image`,
-   modules, initramfs, GRUB configuration and DTB together. Confirm the seven
-   USB-root symbols and all display dependencies resolve built in.
+   modules, initramfs, GRUB configuration and DTB together. Run
+   `recovery/check-usb-root-config.sh` against `out/.config`; all 21 USB-root
+   and diagnostic-console symbols must resolve built in. Confirm the display
+   dependencies separately.
 2. Boot the default USB-A premount-shell entry first. Confirm PTN3222 at
    `i2c18:0x4f`, XHCI and the external root UUID, then save the initramfs log.
 3. Only after USB root is proven, test the normal native-display entry and the
