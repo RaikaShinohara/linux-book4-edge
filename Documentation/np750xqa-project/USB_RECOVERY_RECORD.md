@@ -157,3 +157,14 @@ uses the unchanged NP750_ROOT UUID for the real root filesystem.
 
 - rebuilt `EFI/BOOT/BOOTAA64.EFI` SHA-256:
   `32fe3dd858107b88a1077b5791da0ae48ef9ceea2c9aadde882cf697d74220e1`
+
+The following test proved that this GRUB build could not enumerate even the
+FAT filesystem by label, despite UEFI having loaded GRUB from it. The files and
+their hashes were intact. The final loader therefore embeds the current Image,
+initramfs and DTB in its own memdisk and all active menu entries use
+`root=memdisk`. This removes GRUB filesystem and USB enumeration from the
+kernel hand-off entirely.
+
+- self-contained `EFI/BOOT/BOOTAA64.EFI` SHA-256:
+  `980244e6e14e696e531814c69a12bf3d426ea6524630fb7f7e33059e5d9a8e80`
+- loader size: 83 MiB
