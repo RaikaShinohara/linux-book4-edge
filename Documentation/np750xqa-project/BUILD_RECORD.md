@@ -176,3 +176,11 @@ TLMM, RPMh regulator, interconnect and GPI DMA providers that the first fix
 had still left modular or unset. A native Arch build must still run schema
 validation and produce the final Image, DTB, initramfs and configuration
 hashes before recovery media is updated.
+
+The native Arch build completed on 2026-09-02. All 21 configuration checks
+passed and the resulting kernel, modules, DTB, initramfs and rebuilt ARM64 GRUB
+loader were installed together. Final artifact hashes are recorded in
+`USB_RECOVERY_RECORD.md`. The DTB hash matches the already compiled and
+semantically validated USB-A corrected source above. A repeat of the schema
+target on this workstation was unavailable because its local `dtschema`
+environment predates the kernel's minimum required version.

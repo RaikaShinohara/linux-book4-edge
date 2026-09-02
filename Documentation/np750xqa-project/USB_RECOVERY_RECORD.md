@@ -105,7 +105,7 @@ initramfs contains the explicit Qualcomm USB PHY, DWC3 and XHCI platform
 modules. The 60-second logging delay is removed, `/var/log/journal` is enabled
 for persistent journals and `/var/log/np750xqa` is created in advance.
 
-## USB-A correction awaiting media update (2026-09-02)
+## USB-A correction installed (2026-09-02)
 
 The lack of logs is now treated as possible failure to reacquire the recovery
 stick after the UEFI hand-off. The repository DTS replaces the inherited CRD
@@ -119,7 +119,24 @@ template names the same provider chain defensively as well as the correct
 The GRUB template defaults to a `break=premount` USB diagnostic with
 `rd.log=all`. The diagnostic keyboard transports are built in, and the
 first-boot logger copies the initramfs log to the external root after it mounts.
-These changes have not been copied to the removable drive in this Windows
-session. Build and installation instructions, expected observations and the
-distinction between confirmed ACPI data and inferred port pairing are in
-`USB_BRINGUP.md`.
+These changes were built natively on Arch and installed as one matched set on
+the removable drive. The previous installed set is retained with the suffix
+`.usbfix1`. The FAT and ext4 filesystems passed read-only checks after the
+update.
+
+- `boot/Image-np750xqa` SHA-256:
+  `cf8c8a2c6615785cede360d5e01398dced2118ff03910c427087a85fb246a762`
+- display/USB DTB SHA-256:
+  `16cdcd18574c7c3d536ccfb0536c7e22dcecac0ad308bdbd3e823ee803d36c5e`
+- `boot/initramfs-np750xqa.img` SHA-256:
+  `326023d2da81d5eb49e87e1ef2517a66383433106b16190492dbab3174e88df2`
+- `EFI/BOOT/BOOTAA64.EFI` SHA-256:
+  `f0d63ed4da37c90e8d4ade4776f2c301b9eb6254e865eca06e2fe3f3b74cb79e`
+- build configuration SHA-256:
+  `5c3516e002186b331be5194b40b22f2ae5de516e5a86861fa5edc5d2eb44eed6`
+
+The default embedded GRUB entry is the USB-A premount diagnostic. The
+initramfs also contains `np750log`, which attempts to save early `dmesg`
+snapshots on `NP750_EFI:/np750xqa-early-logs/`. Build instructions, expected
+observations and the distinction between confirmed ACPI data and inferred port
+pairing are in `USB_BRINGUP.md`.
