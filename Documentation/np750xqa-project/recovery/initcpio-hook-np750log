@@ -1,0 +1,19 @@
+#!/usr/bin/ash
+
+run_hook() {
+	(
+		for delay in 10 20 30 60; do
+			sleep "$delay"
+
+			device=$(findfs LABEL=NP750_EFI 2>/dev/null) || continue
+			mkdir -p /run/np750-efi
+			mount -t vfat -o rw,sync "$device" /run/np750-efi 2>/dev/null || continue
+
+			mkdir -p /run/np750-efi/np750xqa-early-logs
+			dmesg >"/run/np750-efi/np750xqa-early-logs/dmesg-${delay}s.txt" 2>&1
+			cat /proc/cmdline >"/run/np750-efi/np750xqa-early-logs/proc-cmdline.txt" 2>&1
+			sync
+			umount /run/np750-efi 2>/dev/null || true
+		done
+	) &
+}

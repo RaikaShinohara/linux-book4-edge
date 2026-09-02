@@ -1,0 +1,16 @@
+#!/bin/bash
+
+build() {
+	add_binary findfs
+	add_binary mount
+	add_binary umount
+	add_binary dmesg
+	add_binary sync
+	add_runscript
+}
+
+help() {
+	cat <<HELPEOF
+Capture early NP750XQA kernel logs to the removable EFI partition.
+HELPEOF
+}
