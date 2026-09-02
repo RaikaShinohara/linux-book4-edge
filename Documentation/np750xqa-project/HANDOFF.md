@@ -2,9 +2,9 @@
 
 ## Objective
 
-Continue the NP750XQA port. The kernel and recovery USB have been built and a
-first physical boot attempted. The next milestone is reliable early log
-capture while testing the experimental internal KDB eDP implementation.
+Continue the NP750XQA port. The kernel and recovery USB have been built and two
+physical boots attempted. The next milestone is reliable early log capture
+while testing real DP3 HPD and PMK8550 PWM backlight control.
 Do not start by installing a desktop environment or writing Linux to internal
 UFS.
 
@@ -38,6 +38,15 @@ UFS.
   control and made the DRM, panel and eDP PHY drivers built in.
 - Disabled the Adreno GPU for the first display test so missing 3D firmware
   cannot block the display-only MSM DRM path.
+- The second physical attempt used a matched build with the display stack
+  genuinely built in. Some Linux output appeared, then the screen went black;
+  no saved log establishes whether boot continued. See `SECOND_BOOT_RESULT.md`.
+- Compared the board with the upstream X1E HP OmniBook X14 and the X1P42100
+  Surface Pro 12 community description. Replaced `no-hpd` with dedicated DP3
+  HPD and described the PMK8550 19.2 kHz PWM backlight independently indicated
+  by the Samsung DSDT.
+- Added GRUB diagnostics for native display with firmware resources preserved,
+  firmware framebuffer only, and firmware framebuffer with one CPU.
 
 ## Validation already performed for the first boot artifact
 
@@ -59,7 +68,7 @@ The build and schema validation recorded in `BUILD_RECORD.md` completed. The
 DTB was boot-attempted on the physical machine, but there is not yet a kernel
 log proving how far execution progressed.
 
-## Validation performed for the display source
+## Validation performed for the previous display source
 
 The new display DTB was preprocessed and compiled with `dtc` 1.7.2, then
 decompiled successfully. Assertions confirmed enabled DP3, generic
@@ -67,21 +76,33 @@ decompiled successfully. Assertions confirmed enabled DP3, generic
 enable/pinctrl properties, and disabled GPU. Its size is 213348 bytes and its
 SHA-256 is
 `CC445BB69E707EC737E39EE3898CFA1A58022DF06FB0BF59443E9D2F579478D8`.
-This DTB has not been physically tested, and a complete kernel has not been
-built from the display branch on this Windows machine.
+That exact DTB was part of the second physical attempt. It displayed some Linux
+output and then became black, but no saved kernel log was recovered.
+
+## Validation performed for the revised HPD/backlight source
+
+Commit `65fe4cdbf3a52b6f01e5b806232fab8fe03619c7` was preprocessed and compiled
+with `dtc` 1.7.2, then decompiled successfully. Assertions confirmed dedicated
+DP3 HPD pinctrl, generic `edp-panel`, retained panel supply/endpoint, connected
+`pwm-backlight`, enabled PMK8550 PWM, absent `no-hpd` and disabled GPU. Its size
+is 213826 bytes and its SHA-256 is
+`3317E3073D483911D7F985591E2D1AA26908DC65FFEE869520B97CFC56472057`.
+This is structural validation only. The revised kernel has not been built on
+Linux or tested on the physical machine.
 
 ## Immediate continuation order
 
-1. Extend logging into initramfs/early userspace so it syncs incremental
-   evidence to the removable root. The 60-second delay was removed from the
-   recovery service, but that service still depends on reaching userspace.
-2. Enable persistent journald storage for later userspace evidence.
-3. Repeat the removable-media test and recover logs before claiming UFS,
-   keyboard or userspace support.
-4. Rebuild from the display branch, update the removable kernel and DTB as a
-   matched pair, and test whether the KDB EDID is read over AUX.
-5. If video appears but brightness control does not, capture DRM and backlight
-   sysfs evidence before adding any PWM or GPIO assumption.
+1. Build the current branch on the Arch workstation and confirm the five
+   display/backlight Kconfig options listed in `DISPLAY_BRINGUP.md` resolve to
+   `y`.
+2. Install the resulting Image, modules and DTB as one matched set on the
+   removable recovery system; preserve the previous entries and artifacts.
+3. Test the GRUB entries in the order documented in `SECOND_BOOT_RESULT.md`.
+4. Recover persistent journal/initramfs evidence before claiming UFS, keyboard
+   or userspace support.
+5. If native video still fails, use the `nomodeset` comparison and DRM log to
+   decide between HPD/AUX, link training and backlight rather than guessing a
+   new GPIO.
 
 ## Hard constraints
 
@@ -97,6 +118,10 @@ built from the display branch on this Windows machine.
   none of those false modifications were committed.
 - Stop a physical test if fan, temperature, battery or power behaviour appears
   abnormal.
+- Do not change the eight-CPU topology, PSCI method or select the EL2 overlay
+  merely because video is black. First use the one-CPU diagnostic and recover
+  logs. Firmware chooses EL1/EL2; there is no generic "disable hypervisor"
+  kernel parameter.
 
 ## Reference repositories
 

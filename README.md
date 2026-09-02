@@ -13,9 +13,10 @@ machine is in [Documentation/np750xqa-project](Documentation/np750xqa-project/RE
 
 ## X1P42100 NP750XQA status
 
-**Nothing in this section has been confirmed by a Linux boot on the physical
-machine yet.** The entries below describe what is expected from the current
-Device Tree and kernel configuration, not tested hardware support.
+**None of the hardware features below has been confirmed working yet.** Two
+physical boots reached at least early Linux output but the internal screen then
+became black and no saved kernel log proved later boot stages. The entries below
+describe what is expected from the current Device Tree and kernel configuration.
 
 ### Expected to work in the initial bring-up
 
@@ -42,9 +43,11 @@ Device Tree and kernel configuration, not tested hardware support.
   dependent and is not a replacement for native panel support.
 - **Experimental internal display:** the KDB `KD156N2030A03` is now described
   as a generic eDP panel on `mdss_dp3`. MSM DRM, the generic eDP panel driver
-  and the Qualcomm eDP PHY are built in so the framebuffer console can appear
-  before the external root is mounted. This has not yet been physically tested;
-  backlight control may remain unavailable.
+  and the Qualcomm eDP PHY are built in. The revised description uses the
+  dedicated DP3 HPD pin and a built-in PMK8550 PWM backlight at the 19.2 kHz,
+  9-bit setting reported by Samsung firmware. This exact revision has not yet
+  been physically tested, and the inherited panel 3.3 V rail is still an
+  unconfirmed board assumption.
 
 ### Deliberately disabled or still pending
 
@@ -76,7 +79,10 @@ The first boot should be considered successful if the kernel reaches a recovery
 initramfs, exposes a console, enumerates USB and probes the UFS controller
 without fatal errors. Keep the Windows EFI entry and recovery media intact, and
 do not write to internal UFS during this first test. Capture the complete early
-console and `dmesg` log for the next Device Tree revision.
+console and `dmesg` log for the next Device Tree revision. Diagnostic GRUB
+entries can preserve firmware resources, keep the firmware framebuffer with
+`nomodeset`, or isolate secondary CPU/idle startup; see
+[the second boot analysis](Documentation/np750xqa-project/SECOND_BOOT_RESULT.md).
 
 ## X1E80100 status
 Supported features:

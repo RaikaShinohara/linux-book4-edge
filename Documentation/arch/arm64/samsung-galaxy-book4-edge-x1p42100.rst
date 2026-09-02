@@ -38,7 +38,8 @@ The initial Device Tree provides:
 * the internal UFS controller, PHY and confirmed regulator assignments; and
 * the keyboard at I2C address ``0x05``, HID descriptor address ``0x20`` and
   TLMM interrupt 67; and
-* an experimental generic eDP description for the KDB ``KD156N2030A03`` panel.
+* an experimental generic eDP description for the KDB ``KD156N2030A03`` panel,
+  using dedicated DP3 HPD and the PMK8550 PWM backlight path reported by ACPI.
 
 The keyboard interrupt mapping is supported by the matching Samsung ACPI GPIO
 resource and the existing X1E80100 Galaxy Book4 Edge Device Tree.
@@ -49,9 +50,9 @@ Deliberately deferred hardware
 The following devices remain disabled or undescribed until their board data is
 confirmed:
 
-* Backlight control for the internal panel is not confirmed. The generic eDP
-  path can read EDID and train the link, but brightness may remain at the
-  firmware-selected level.
+* The PMK8550 PWM backlight description is not physically confirmed. The
+  factory DSDT reports 19.2 kHz PMIC PWM with 9-bit resolution, but no
+  unconfirmed backlight-enable GPIO has been added.
 * The CRD camera sensor does not describe the NP750XQA camera path, so CAMSS is
   disabled.
 * The touchpad is present at I2C address ``0x40`` on ``i2c13``. Its HID
@@ -85,9 +86,10 @@ Build the kernel and modules with the same configuration::
     make O=out ARCH=arm64 LLVM=1 -j"$(nproc)" Image modules
 
 ``book4_defconfig`` builds the UFS host, Qualcomm UFS glue, QMP UFS PHY, MSM
-DRM, generic eDP panel driver and Qualcomm eDP PHY into the kernel. This lets a
-recovery initramfs discover storage and obtain a framebuffer console without
-requiring those drivers as modules.
+DRM, generic eDP panel driver, Qualcomm eDP PHY, PWM backlight and Qualcomm
+LPG/PWM provider into the kernel. This lets a recovery initramfs discover
+storage and attempt a lit framebuffer console without requiring those drivers
+as modules.
 
 Initial boot policy
 ===================
@@ -99,3 +101,6 @@ default boot entry until early console and storage logs have been reviewed.
 
 The most useful first report is the complete early console and ``dmesg`` log,
 including UFS, GENI I2C, HID, PCIe, remoteproc and display probe messages.
+The recovery GRUB template includes ``nomodeset`` and one-CPU diagnostic
+entries to distinguish native DRM takeover from general boot or secondary CPU
+startup. These options are temporary diagnostics, not normal operating modes.

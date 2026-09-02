@@ -118,24 +118,31 @@ Follow `TEST_PLAN.md`. The initial goal is only:
 Only after those stages are repeatable should the project add touchpad, audio,
 EC, suspend, GPU acceleration or a desktop Arch environment.
 
-## 8. Current priority: test the experimental internal display
+## 8. Current priority: distinguish display takeover from boot progress
 
-The first attempt reached GRUB, then lost the internal image. No delayed
-first-boot log was produced. For the next attempt:
+The second attempt used a matched build with MSM DRM built in, displayed some
+Linux output and then became black. No saved log proves whether boot continued.
+For the next attempt:
 
-1. Capture and sync `dmesg` during initramfs or immediately after mounting the
-   external root; do not wait for `multi-user.target`.
-2. Make the systemd journal persistent on the removable root.
-3. Preserve the verbose `tty0` command line. MSM DRM, `panel-edp` and the eDP
-   PHY are now built in and should replace simpledrm with a native console.
-4. Build the display branch and install its `Image` and DTB together. Do not
-   reuse the previous kernel with the new DTB because its display drivers are
-   modules.
-5. Capture `drm.debug=0x1ff` output and verify the KDB EDID, AUX transactions,
-   link training, connector state and framebuffer-console hand-off.
-6. Treat missing brightness control separately from missing video. Do not add
-   a PWM, EC command or backlight GPIO without new NP750XQA evidence.
+1. Build the latest display branch and install its `Image`, modules and DTB
+   together. Confirm DRM, panel, eDP PHY, PWM backlight and Qualcomm LPG/PWM
+   provider all resolve built in.
+2. Test the normal native-display entry first, then the entry preserving unused
+   firmware resources.
+3. Test `nomodeset`. If the firmware framebuffer remains visible and userspace
+   is reached, native DRM takeover—not general boot—is the failing boundary.
+4. Only if needed, test `nomodeset maxcpus=1 cpuidle.off=1`. A difference here
+   is evidence to investigate PSCI/secondary CPU or idle handling; otherwise do
+   not change CPU topology or hypervisor assumptions.
+5. Capture and sync `dmesg` during initramfs or immediately after mounting the
+   external root. Also recover the persistent journal.
+6. For the native entry, inspect KDB EDID/AUX, HPD, link training, connector,
+   framebuffer hand-off and PWM-backlight probe messages.
+7. Treat a lit backlight with no image, a valid image with fixed brightness and
+   a fully black panel as different failure modes. Do not invent a new enable
+   GPIO or regulator without NP750XQA evidence.
 
-The inherited CRD ATNA driver and its PMIC GPIO were removed. The current
-implementation uses the generic eDP driver and deliberately leaves the
-Samsung-specific PMIC backlight path undescribed.
+The inherited CRD ATNA driver and its unconfirmed enable GPIO remain removed.
+The current implementation uses generic eDP, real DP3 HPD and the PMK8550 PWM
+path independently indicated by the Samsung DSDT and other Purwa LCD devices.
+See `SECOND_BOOT_RESULT.md` for the exact interpretation of each GRUB entry.

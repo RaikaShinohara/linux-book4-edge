@@ -133,3 +133,23 @@ dtschema 2026.6. The complete `Image` and module build also completed.
   `739226877eb80d1cf48e5335185335663cafa40b73928ca121ab6591b351b30e`
 - Sorted module manifest SHA-256:
   `a18beeaef93441de099d9201acad22ccaeaf218d5a9ee514454aa8bb07700a48`
+
+## Revised HPD/backlight source (2026-09-02)
+
+After the built-in display build showed a few Linux messages and then the same
+black screen, the DTS was compared with other Purwa LCD devices and with the
+NP750XQA DSDT. Commit `65fe4cdbf3a52b6f01e5b806232fab8fe03619c7`
+replaces `no-hpd` with the dedicated DP3 HPD pinctrl and adds the PMK8550 PWM
+backlight described in
+`SECOND_BOOT_RESULT.md`. `CONFIG_BACKLIGHT_PWM` and `CONFIG_LEDS_QCOM_LPG` are
+requested built in.
+
+The source DTB was compiled and semantically checked with the Windows snapshot:
+
+- DTB size: 213826 bytes
+- DTB SHA-256:
+  `3317e3073d483911d7f985591e2d1aa26908dc65ffee869520b97cfc56472057`
+
+This is not a replacement for the build record above. A native Linux build must
+still resolve Kconfig, run the DT schema checks and produce new hashes for the
+Image, DTB, `.config` and module manifest before updating recovery media.

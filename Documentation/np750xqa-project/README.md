@@ -15,6 +15,10 @@ need to repeat the project history.
   `ddace7b585832aa5e65b044e3c342fcedba3c88f`
 - Display implementation commit:
   `8a3a9d850a41ee2def109a4334b4b62b1909b3e5`
+- Built-in display dependency commit tested in the second physical attempt:
+  `ba45a7e703197cbf15d6a8b1ecafebd9f27306cd`
+- Revised DP3 HPD and PMK8550 backlight commit awaiting a Linux build/test:
+  `65fe4cdbf3a52b6f01e5b806232fab8fe03619c7`
 - Upstream reference branch: `zensanp/x1e80100-book4e-6.17-rc4`
 - Base commit: `708b2aeff3e9e014aaf6ec36e3de0e43b7c23aa5`
 - Board DTS:
@@ -28,8 +32,10 @@ need to repeat the project history.
 3. [NEXT_STEPS.md](NEXT_STEPS.md) -- work expected from the next AI agent.
 4. [DISPLAY_BRINGUP.md](DISPLAY_BRINGUP.md) -- display evidence and current
    implementation assumptions.
-5. [TEST_PLAN.md](TEST_PLAN.md) -- recoverable first-boot and logging plan.
-6. [../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst](../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst)
+5. [SECOND_BOOT_RESULT.md](SECOND_BOOT_RESULT.md) -- latest physical result,
+   revised HPD/backlight implementation and CPU/hypervisor diagnostics.
+6. [TEST_PLAN.md](TEST_PLAN.md) -- recoverable first-boot and logging plan.
+7. [../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst](../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst)
    -- user-facing kernel build notes.
 
 The latest workstation build and validation results are recorded in
@@ -46,10 +52,12 @@ port. It is intended to reach a recovery initramfs with USB, internal UFS and
 the internal keyboard. The native KDB display path is now enabled
 experimentally; touchpad and camera support remain deliberately deferred.
 
-The first physical recovery-USB attempt and the resulting black-screen/offline
-inspection are documented in `FIRST_BOOT_RESULT.md`. No kernel log was
-recovered, so the current boot depth remains unproven. The next build must test
-the generic KDB eDP description while capturing evidence before userspace.
+The first physical attempt is documented in `FIRST_BOOT_RESULT.md`. The second
+attempt used a matched kernel/DTB with the native display stack built in, showed
+some Linux output and then went black; see `SECOND_BOOT_RESULT.md`. No kernel
+log was recovered, so the current boot depth remains unproven. The next build
+must test real DP3 HPD plus the PMK8550 PWM backlight and use the diagnostic
+GRUB entries to separate native-display takeover from CPU/boot progression.
 
 No firmware, partition, UFS content or Windows boot entry was modified while
 creating this work.

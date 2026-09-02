@@ -82,6 +82,13 @@ previous kernel, DTB, initramfs and EFI loader were retained with a
 `.firstboot` suffix and are selectable through the GRUB entry
 `NP750XQA previous kernel (display disabled)`.
 
+The repository GRUB template now also contains three diagnostic entries for
+the next media update: native eDP with firmware resources preserved,
+firmware-framebuffer-only using `nomodeset`, and the same framebuffer test with
+one CPU and idle disabled. These entries have not been copied to the removable
+drive in this Windows session. Their intended test order and interpretation are
+in `SECOND_BOOT_RESULT.md`.
+
 Installed display-test artifacts:
 
 - `boot/Image-np750xqa` SHA-256:
