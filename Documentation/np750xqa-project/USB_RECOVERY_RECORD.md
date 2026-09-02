@@ -244,3 +244,16 @@ second interactive shell immediately afterward.
   `a060265c08f0c9b004f02c926f9c0dcf042a6142e77052698ce6197297f1c00e`
 - loader with embedded bounded-udev initramfs SHA-256:
   `10299a7b51fd111a2af20c8534bc3efe8d07d74a6280ad3e304da6031570b3b1`
+
+The bounded post-udev shell was not visible, but the recovery-stick LED began
+flashing after leaving the early shell. The next image therefore treats loss
+of the firmware framebuffer and USB progress independently: it does not stop
+after udev, writes the post-udev device state to
+`NP750_EFI:/np750xqa-early-logs/latest-post-udev/` when that partition is
+visible, and continues directly toward mounting the root filesystem. The two
+focused entries no longer request a premount break.
+
+- automatic-log initramfs SHA-256:
+  `e5c4f10e43bddadbc10b9becdbdc5aaa28d987d41e1bfa8ac297c67f3529080f`
+- loader with embedded automatic-log initramfs SHA-256:
+  `15019077ac5733594c5f7e9c7394918bb253b131dd4a1e89134db800211cb04c`

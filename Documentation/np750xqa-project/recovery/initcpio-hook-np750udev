@@ -15,17 +15,27 @@ run_hook() {
     udevadm trigger --action=add --type=devices
     udevadm settle --timeout=15 || echo "udev settle timed out after 15 seconds"
 
-    echo
-    echo "============================================================"
-    echo "NP750XQA POST-UDEV SHELL"
-    echo "Block devices:"
-    ls -l /dev/sd* /dev/disk/by-uuid 2>/dev/null || true
-    echo "Deferred devices:"
-    cat /sys/kernel/debug/devices_deferred 2>/dev/null || true
-    echo "Type exit to continue to the regular premount shell."
-    echo "============================================================"
-    echo
-    launch_interactive_shell
+    echo "NP750XQA: recording post-udev state and continuing boot"
+
+    mkdir -p /run/np750-efi
+    efi_dev="$(readlink -f /dev/disk/by-label/NP750_EFI 2>/dev/null)"
+    if [ -b "$efi_dev" ] && mount -o rw "$efi_dev" /run/np750-efi; then
+        logdir=/run/np750-efi/np750xqa-early-logs/latest-post-udev
+        mkdir -p "$logdir"
+        cat /proc/cmdline >"$logdir/cmdline.txt"
+        dmesg >"$logdir/dmesg.txt"
+        cat /sys/kernel/debug/devices_deferred \
+            >"$logdir/devices-deferred.txt" 2>&1 || true
+        ls -l /dev/sd* /dev/disk/by-label /dev/disk/by-uuid \
+            >"$logdir/block-devices.txt" 2>&1 || true
+        find /sys/bus/usb/devices -maxdepth 2 -type f \
+            >"$logdir/usb-sysfs-files.txt" 2>&1 || true
+        sync
+        umount /run/np750-efi
+        echo "NP750XQA: post-udev log saved to NP750_EFI"
+    else
+        echo "NP750XQA: NP750_EFI was not visible after udev"
+    fi
 }
 
 run_cleanuphook() {
