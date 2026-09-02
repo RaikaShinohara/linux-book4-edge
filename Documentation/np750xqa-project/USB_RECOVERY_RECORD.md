@@ -205,3 +205,15 @@ DTB.
   `f555d72918b5dcff57f9904c6aa49193cc924eb4c8c86f571546fdac39b9cf51`
 - loader with embedded recovery DTB SHA-256:
   `ccf70645d57cdaec81d07c0bd4892118134e4d1f7b3ed860f6cc54613961b82b`
+
+The recovery-DTB video again reached late initcalls, fixed several firmware
+dependency cycles and retried `a400000.usb`, but produced no file on either
+partition. The visible duration was mostly `initcall_debug` output rather than
+an equivalent increase in boot progress. The focused diagnostic removes that
+global trace, disables console blanking, sets a five-second deferred-probe
+timeout and enables dynamic debug for `drivers/base/dd.c`, so pending devices
+are reported with their missing supplier instead of being buried in unrelated
+initcalls.
+
+- focused deferred-probe loader SHA-256:
+  `ce77681304f2119e2578693100c93a4762013c6e84b6202e8c6704581f6886a4`
