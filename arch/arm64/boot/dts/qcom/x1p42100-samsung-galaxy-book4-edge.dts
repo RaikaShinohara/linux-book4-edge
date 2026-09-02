@@ -18,6 +18,17 @@
 	model = "Samsung Galaxy Book4 Edge (NP750XQA)";
 	compatible = "samsung,galaxy-book4-edge-np750xqa", "qcom,x1p42100";
 	chassis-type = "laptop";
+
+	backlight: backlight {
+		compatible = "pwm-backlight";
+		pwms = <&pmk8550_pwm 0 52083>;
+
+		brightness-levels = <0 64 128 192 256 320 384 448 511>;
+		default-brightness-level = <4>;
+
+		pinctrl-0 = <&edp_bl_pwm>;
+		pinctrl-names = "default";
+	};
 };
 
 /* The CRD input devices are not fitted to this Samsung board. */
@@ -46,11 +57,14 @@
 /*
  * The factory KDB KD156N2030A03 exposes a valid EDID and uses the standard
  * eDP AUX path. Replace the non-standard ATNA panel inherited from the CRD
- * with the generic eDP panel driver. The panel's ACPI profile reports no
- * power-up delay and the HPD input is not exposed as a confirmed board GPIO,
- * so use AUX discovery without waiting for a separate HPD signal.
+ * with the generic eDP panel driver. The panel's ACPI profile reports an
+ * active-high HPD signal and PMIC PWM backlight control at 19.2 kHz, matching
+ * the dedicated DP3 HPD pin and PMK8550 PWM path used by Purwa designs.
  */
 &mdss_dp3 {
+	pinctrl-0 = <&edp0_hpd_default>;
+	pinctrl-names = "default";
+
 	status = "okay";
 
 	aux-bus {
@@ -60,9 +74,20 @@
 			/delete-property/ pinctrl-0;
 			/delete-property/ pinctrl-names;
 
-			no-hpd;
+			backlight = <&backlight>;
 		};
 	};
+};
+
+&pmk8550_gpios {
+	edp_bl_pwm: edp-bl-pwm-state {
+		pins = "gpio5";
+		function = "func3";
+	};
+};
+
+&pmk8550_pwm {
+	status = "okay";
 };
 
 /* Keep 3D acceleration out of the first display test; its firmware is absent. */
