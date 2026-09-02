@@ -19,6 +19,8 @@ need to repeat the project history.
   `ba45a7e703197cbf15d6a8b1ecafebd9f27306cd`
 - Revised DP3 HPD and PMK8550 backlight commit awaiting a Linux build/test:
   `65fe4cdbf3a52b6f01e5b806232fab8fe03619c7`
+- USB-A topology and built-in root-driver correction:
+  `25c1771b1` (`arm64: qcom: fix NP750XQA USB-A root path`)
 - Upstream reference branch: `zensanp/x1e80100-book4e-6.17-rc4`
 - Base commit: `708b2aeff3e9e014aaf6ec36e3de0e43b7c23aa5`
 - Board DTS:
@@ -34,8 +36,10 @@ need to repeat the project history.
    implementation assumptions.
 5. [SECOND_BOOT_RESULT.md](SECOND_BOOT_RESULT.md) -- latest physical result,
    revised HPD/backlight implementation and CPU/hypervisor diagnostics.
-6. [TEST_PLAN.md](TEST_PLAN.md) -- recoverable first-boot and logging plan.
-7. [../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst](../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst)
+6. [USB_BRINGUP.md](USB_BRINGUP.md) -- USB-A failure evidence, corrected
+   repeater topology, built-in driver chain and premount diagnostic procedure.
+7. [TEST_PLAN.md](TEST_PLAN.md) -- recoverable first-boot and logging plan.
+8. [../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst](../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst)
    -- user-facing kernel build notes.
 
 The latest workstation build and validation results are recorded in
@@ -56,8 +60,11 @@ The first physical attempt is documented in `FIRST_BOOT_RESULT.md`. The second
 attempt used a matched kernel/DTB with the native display stack built in, showed
 some Linux output and then went black; see `SECOND_BOOT_RESULT.md`. No kernel
 log was recovered, so the current boot depth remains unproven. The next build
-must test real DP3 HPD plus the PMK8550 PWM backlight and use the diagnostic
-GRUB entries to separate native-display takeover from CPU/boot progression.
+must first test whether Linux reacquires the USB-A root using the corrected
+`i2c18:0x4f` PTN3222 path. The default GRUB diagnostic stops before mounting
+root and logs early userspace. Once USB is proven, test real DP3 HPD plus the
+PMK8550 PWM backlight and use the remaining entries to separate native-display
+takeover from CPU/boot progression.
 
 No firmware, partition, UFS content or Windows boot entry was modified while
 creating this work.

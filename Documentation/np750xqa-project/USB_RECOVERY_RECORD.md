@@ -104,3 +104,18 @@ The embedded GRUB configuration enables `drm.debug=0x1ff`. The rebuilt
 initramfs contains the explicit Qualcomm USB PHY, DWC3 and XHCI platform
 modules. The 60-second logging delay is removed, `/var/log/journal` is enabled
 for persistent journals and `/var/log/np750xqa` is created in advance.
+
+## USB-A correction awaiting media update (2026-09-02)
+
+The lack of logs is now treated as possible failure to reacquire the recovery
+stick after the UEFI hand-off. The repository DTS replaces the inherited CRD
+repeater association with the NP750XQA `i2c18:0x4f`/GPIO7 path, and
+`book4_defconfig` makes the whole USB-root chain built in. The mkinitcpio
+template now correctly names `phy-nxp-ptn3222` and also lists GENI I2C and the
+Synopsys eUSB2 PHY.
+
+The GRUB template defaults to a `break=premount` USB diagnostic with
+`rd.log=all`. These changes have not been copied to the removable drive in this
+Windows session. Build and installation instructions, expected observations
+and the distinction between confirmed ACPI data and inferred port pairing are
+in `USB_BRINGUP.md`.

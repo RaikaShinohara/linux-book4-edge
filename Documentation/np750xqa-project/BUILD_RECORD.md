@@ -153,3 +153,21 @@ The source DTB was compiled and semantically checked with the Windows snapshot:
 This is not a replacement for the build record above. A native Linux build must
 still resolve Kconfig, run the DT schema checks and produce new hashes for the
 Image, DTB, `.config` and module manifest before updating recovery media.
+
+## USB-A corrected source (2026-09-02)
+
+After tracing the recovery stick to ACPI `USB3/RHUB/MP1`, the source was
+changed in commit `25c1771b1` as documented in `USB_BRINGUP.md`. A
+Windows-hosted preprocessing,
+`dtc` compilation, DTB round trip and targeted semantic validation completed.
+Assertions cover the enabled `i2c18` bus, new `nxp,ptn3222` node, disabled CRD
+repeater and the `usb_mp_hsphy1` phandle link.
+
+- DTB size: 214337 bytes
+- DTB SHA-256:
+  `16cdcd18574c7c3d536ccfb0536c7e22dcecac0ad308bdbd3e823ee803d36c5e`
+
+The Windows MSYS2 Kconfig attempt did not complete and was terminated without
+producing `.config`. A native Arch build must still confirm the seven USB-root
+symbols resolve to `y`, run schema validation and produce the final Image,
+DTB, initramfs and configuration hashes before recovery media is updated.

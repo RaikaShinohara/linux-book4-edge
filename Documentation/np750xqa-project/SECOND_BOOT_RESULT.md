@@ -13,6 +13,12 @@ stack built in. The repeated black screen therefore cannot be explained only
 by those drivers having been modules. The visible Linux text proves that UEFI
 entered the kernel, but it does not prove UFS, the external root or userspace.
 
+Subsequent inspection made USB-root failure a concrete competing explanation.
+The tested Kingston stick was connected at ACPI `USB3/RHUB/MP1`, while the DTS
+used the X1 CRD's wrong eUSB2 repeater bus/reset and the initramfs omitted the
+actual NXP PTN3222 driver. See `USB_BRINGUP.md`. The next test must establish
+USB enumeration before drawing any new conclusion from the black panel.
+
 ## Display comparison
 
 Working Qualcomm X1 LCD descriptions were compared with this board:
@@ -56,7 +62,11 @@ and watchdog state; it does not alter CPU enable methods or the internal display
 path. The exception level is selected by firmware, so there is no safe kernel
 command-line switch that simply "skips the hypervisor".
 
-Three recovery GRUB diagnostics were added without changing the default entry:
+The recovery GRUB template now defaults to an earlier diagnostic using
+`nomodeset`, `break=premount`, full mkinitcpio logging and conservative USB
+parameters. It must prove the external USB device before root mount.
+
+The three display/CPU diagnostics remain available:
 
 1. native eDP while preserving firmware-enabled clocks, power domains and
    regulators;
@@ -73,13 +83,15 @@ Interpretation:
   handling with logs before changing the DT topology.
 - If all entries become black, retrieve the persistent journal or initramfs log;
   black video alone cannot distinguish a boot hang from a backlight failure.
+- If the premount entry exposes no USB disk and its LED never resumes activity,
+  debug the `i2c18:0x4f` PTN3222 path before altering display or CPU topology.
 
 ## Validation boundary
 
-The revised source was only preprocessed and compiled with `dtc` on Windows.
-The resulting local DTB passed targeted semantic assertions, is 213826 bytes,
-and has SHA-256
+The earlier display-only source was preprocessed and compiled with `dtc` on
+Windows. Its local DTB was 213826 bytes with SHA-256
 `3317e3073d483911d7f985591e2d1aa26908dc65ffee869520b97cfc56472057`.
+A later USB-corrected DTB is recorded in `BUILD_RECORD.md`.
 A full Linux kernel/config/schema build and a new physical test are still
 required. The recovery GRUB file in this repository is a template; no USB or
 internal storage was modified while preparing this revision.

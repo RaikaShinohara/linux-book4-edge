@@ -118,27 +118,29 @@ Follow `TEST_PLAN.md`. The initial goal is only:
 Only after those stages are repeatable should the project add touchpad, audio,
 EC, suspend, GPU acceleration or a desktop Arch environment.
 
-## 8. Current priority: distinguish display takeover from boot progress
+## 8. Current priority: prove USB root before display takeover
 
 The second attempt used a matched build with MSM DRM built in, displayed some
 Linux output and then became black. No saved log proves whether boot continued.
 For the next attempt:
 
-1. Build the latest display branch and install its `Image`, modules and DTB
-   together. Confirm DRM, panel, eDP PHY, PWM backlight and Qualcomm LPG/PWM
-   provider all resolve built in.
-2. Test the normal native-display entry first, then the entry preserving unused
-   firmware resources.
-3. Test `nomodeset`. If the firmware framebuffer remains visible and userspace
+1. Read `USB_BRINGUP.md`. Build the latest branch and install its `Image`,
+   modules, initramfs, GRUB configuration and DTB together. Confirm the seven
+   USB-root symbols and all display dependencies resolve built in.
+2. Boot the default USB-A premount-shell entry first. Confirm PTN3222 at
+   `i2c18:0x4f`, XHCI and the external root UUID, then save the initramfs log.
+3. Only after USB root is proven, test the normal native-display entry and the
+   entry preserving unused firmware resources.
+4. Test `nomodeset`. If the firmware framebuffer remains visible and userspace
    is reached, native DRM takeover—not general boot—is the failing boundary.
-4. Only if needed, test `nomodeset maxcpus=1 cpuidle.off=1`. A difference here
+5. Only if needed, test `nomodeset maxcpus=1 cpuidle.off=1`. A difference here
    is evidence to investigate PSCI/secondary CPU or idle handling; otherwise do
    not change CPU topology or hypervisor assumptions.
-5. Capture and sync `dmesg` during initramfs or immediately after mounting the
+6. Capture and sync `dmesg` during initramfs or immediately after mounting the
    external root. Also recover the persistent journal.
-6. For the native entry, inspect KDB EDID/AUX, HPD, link training, connector,
+7. For the native entry, inspect KDB EDID/AUX, HPD, link training, connector,
    framebuffer hand-off and PWM-backlight probe messages.
-7. Treat a lit backlight with no image, a valid image with fixed brightness and
+8. Treat a lit backlight with no image, a valid image with fixed brightness and
    a fully black panel as different failure modes. Do not invent a new enable
    GPIO or regulator without NP750XQA evidence.
 

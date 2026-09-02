@@ -38,6 +38,8 @@ The initial Device Tree provides:
 * the internal UFS controller, PHY and confirmed regulator assignments; and
 * the keyboard at I2C address ``0x05``, HID descriptor address ``0x20`` and
   TLMM interrupt 67; and
+* the external USB-A port's PTN3222 eUSB2 repeater at ``i2c18:0x4f``, using
+  the second reset resource (TLMM GPIO7) reported for ACPI ``USB3``; and
 * an experimental generic eDP description for the KDB ``KD156N2030A03`` panel,
   using dedicated DP3 HPD and the PMK8550 PWM backlight path reported by ACPI.
 
@@ -85,11 +87,16 @@ Build the kernel and modules with the same configuration::
 
     make O=out ARCH=arm64 LLVM=1 -j"$(nproc)" Image modules
 
-``book4_defconfig`` builds the UFS host, Qualcomm UFS glue, QMP UFS PHY, MSM
-DRM, generic eDP panel driver, Qualcomm eDP PHY, PWM backlight and Qualcomm
-LPG/PWM provider into the kernel. This lets a recovery initramfs discover
-storage and attempt a lit framebuffer console without requiring those drivers
-as modules.
+``book4_defconfig`` builds the UFS path and the complete USB-A root path into
+the kernel. The latter includes GENI I2C, the Synopsys eUSB2 PHY, NXP PTN3222,
+QMP USB PHY, Qualcomm DWC3 and platform xHCI. MSM DRM, the generic eDP panel
+driver, Qualcomm eDP PHY, PWM backlight and Qualcomm LPG/PWM provider are also
+built in. This lets a recovery initramfs discover storage and attempt a lit
+framebuffer console without needing to read those drivers from the USB root.
+
+After ``book4_defconfig``, verify that all USB-root symbols documented in
+``Documentation/np750xqa-project/USB_BRINGUP.md`` resolve to ``y`` before
+copying artifacts to recovery media.
 
 Initial boot policy
 ===================

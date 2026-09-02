@@ -30,9 +30,12 @@ describe what is expected from the current Device Tree and kernel configuration.
 - **Internal keyboard:** the Samsung HID-over-I2C keyboard is described at
   address `0x05`, with HID descriptor `0x20` and the interrupt mapping matching
   the Samsung firmware resources.
-- **Basic USB:** the USB controllers inherited from the X1P42100 CRD are
-  enabled and should provide a recovery input/storage path. The exact Samsung
-  Type-C retimer and connector routing is not confirmed yet.
+- **USB-A recovery path:** the multiport DWC3/XHCI controller is enabled and
+  its second eUSB2 PHY now uses the NP750XQA ACPI topology: PTN3222 at
+  `i2c18:0x4f`, reset by TLMM GPIO7. The complete USB-root driver chain is
+  built in. This is intended to fix loss of the recovery stick after the UEFI
+  hand-off, but remains unconfirmed until a physical boot produces logs. The
+  exact Samsung Type-C retimer and connector routing is not confirmed yet.
 - **PCIe and Wi-Fi enumeration:** the relevant PCIe controllers are enabled.
   FastConnect 7800 should be usable after confirming the correct PCIe path and
   installing the matching Qualcomm firmware and board data.
@@ -83,6 +86,9 @@ console and `dmesg` log for the next Device Tree revision. Diagnostic GRUB
 entries can preserve firmware resources, keep the firmware framebuffer with
 `nomodeset`, or isolate secondary CPU/idle startup; see
 [the second boot analysis](Documentation/np750xqa-project/SECOND_BOOT_RESULT.md).
+The default diagnostic entry now stops in the initramfs before mounting the
+USB root; see
+[the USB-A bring-up record](Documentation/np750xqa-project/USB_BRINGUP.md).
 
 ## X1E80100 status
 Supported features:

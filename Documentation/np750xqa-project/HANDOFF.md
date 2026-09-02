@@ -47,6 +47,15 @@ UFS.
   by the Samsung DSDT.
 - Added GRUB diagnostics for native display with firmware resources preserved,
   firmware framebuffer only, and firmware framebuffer with one CPU.
+- Traced the recovery stick to ACPI `USB3/RHUB/MP1` and found that the CRD
+  repeater topology could not describe this Samsung port. The board DTS now
+  disables the inherited `i2c5:0x4f`/GPIO184 PTN3222 and connects
+  `usb_mp_hsphy1` to `i2c18:0x4f`/GPIO7, matching the second USB3 ACPI
+  repeater resource. See `USB_BRINGUP.md`.
+- Made the complete USB-A root chain built in and corrected the recovery
+  initramfs list to use `phy-nxp-ptn3222`. Added a default premount-shell GRUB
+  entry with full early-userspace logging. These functional changes are commit
+  `25c1771b1`.
 
 ## Validation already performed for the first boot artifact
 
@@ -92,15 +101,18 @@ Linux or tested on the physical machine.
 
 ## Immediate continuation order
 
-1. Build the current branch on the Arch workstation and confirm the five
-   display/backlight Kconfig options listed in `DISPLAY_BRINGUP.md` resolve to
-   `y`.
+1. Read `USB_BRINGUP.md`, build the current branch on the Arch workstation and
+   confirm all seven USB-root Kconfig options plus the display/backlight
+   options resolve to `y`.
 2. Install the resulting Image, modules and DTB as one matched set on the
    removable recovery system; preserve the previous entries and artifacts.
-3. Test the GRUB entries in the order documented in `SECOND_BOOT_RESULT.md`.
-4. Recover persistent journal/initramfs evidence before claiming UFS, keyboard
-   or userspace support.
-5. If native video still fails, use the `nomodeset` comparison and DRM log to
+3. Boot `NP750XQA USB-A premount shell (diagnostic)` first. Confirm PTN3222,
+   XHCI and the external root device before typing `exit`.
+4. Recover `/run/initramfs/init.log`, `dmesg` and persistent journal evidence
+   before claiming UFS, keyboard or userspace support.
+5. Then test the remaining GRUB entries in the order documented in
+   `SECOND_BOOT_RESULT.md`.
+6. If native video still fails, use the `nomodeset` comparison and DRM log to
    decide between HPD/AUX, link training and backlight rather than guessing a
    new GPIO.
 
