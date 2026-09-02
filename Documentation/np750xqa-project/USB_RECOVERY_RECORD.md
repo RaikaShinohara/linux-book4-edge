@@ -177,3 +177,14 @@ enables the built-in EFI framebuffer early console, `initcall_debug` and
 
 - early-console `EFI/BOOT/BOOTAA64.EFI` SHA-256:
   `05bd5d5d3c07be5e5093736a556c2b52e7d7ebf7024b72f191c643df6a76dd5e`
+
+The test video shows normal kernel progress to roughly 0.94 seconds, including
+GIC, timer, ACPI and HID initialization. It also shows
+`bootconsole [efifb0] disabled`; subsequent loss of visible output is therefore
+not evidence of a hang at `ExitBootServices`. The two early-console entries now
+add `keep_bootcon`, supported by the kernel's EFI early-console remap initcall,
+so the known-working firmware framebuffer remains a console while later USB
+and initramfs initialization is diagnosed.
+
+- keep-bootconsole `EFI/BOOT/BOOTAA64.EFI` SHA-256:
+  `a8f2b04365e6e7d4b0bc8ea7f2881cf698d9dd6a99a6c18fe02c67261904eacb`
