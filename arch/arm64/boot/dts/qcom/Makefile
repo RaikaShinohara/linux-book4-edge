@@ -335,5 +335,6 @@ x1p42100-crd-el2-dtbs	:= x1p42100-crd.dtb x1-el2.dtbo
 dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-crd.dtb x1p42100-crd-el2.dtb
 x1p42100-samsung-galaxy-book4-edge-el2-dtbs := x1p42100-samsung-galaxy-book4-edge.dtb x1-el2.dtbo
 dtb-$(CONFIG_ARCH_QCOM) += x1p42100-samsung-galaxy-book4-edge.dtb x1p42100-samsung-galaxy-book4-edge-el2.dtb
+dtb-$(CONFIG_ARCH_QCOM) += x1p42100-samsung-galaxy-book4-edge-recovery.dtb
 dtb-$(CONFIG_ARCH_QCOM) += x1e80100-honor-magicbook-art-14.dtb
 dtb-$(CONFIG_ARCH_QCOM) += x1e80100-samsung-galaxy-book4-edge.dtb

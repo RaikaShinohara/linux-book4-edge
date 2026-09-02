@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * Recovery variant: retain the firmware framebuffer while diagnosing USB-A.
+ * The normal board DTB remains the native-display test target.
+ */
+
+#include "x1p42100-samsung-galaxy-book4-edge.dts"
+
+/ {
+	model = "Samsung Galaxy Book4 Edge (NP750XQA, firmware display recovery)";
+};
+
+&backlight {
+	status = "disabled";
+};
+
+&mdss_dp3 {
+	status = "disabled";
+};
+
+&pmk8550_pwm {
+	status = "disabled";
+};

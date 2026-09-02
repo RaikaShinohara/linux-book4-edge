@@ -188,3 +188,20 @@ and initramfs initialization is diagnosed.
 
 - keep-bootconsole `EFI/BOOT/BOOTAA64.EFI` SHA-256:
   `a8f2b04365e6e7d4b0bc8ea7f2881cf698d9dd6a99a6c18fe02c67261904eacb`
+
+The keep-bootconsole test reached late initcalls at roughly 80 seconds. It
+showed repeated `-EPROBE_DEFER` returns from regulators, PHYs and USB
+controllers, followed by the deferred-probe retry phase. No initramfs or
+persistent log was written. The screen then went blank near the end of that
+phase.
+
+The first two diagnostics now use a separate recovery DTB which keeps the USB
+fix but disables DP3, the PWM backlight node and its PMK8550 PWM provider. This
+prevents Linux display/backlight drivers from changing firmware display state
+while USB enumeration is diagnosed. Native-display entries retain the normal
+DTB.
+
+- recovery DTB SHA-256:
+  `f555d72918b5dcff57f9904c6aa49193cc924eb4c8c86f571546fdac39b9cf51`
+- loader with embedded recovery DTB SHA-256:
+  `ccf70645d57cdaec81d07c0bd4892118134e4d1f7b3ed860f6cc54613961b82b`
