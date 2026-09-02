@@ -140,3 +140,20 @@ initramfs also contains `np750log`, which attempts to save early `dmesg`
 snapshots on `NP750_EFI:/np750xqa-early-logs/`. Build instructions, expected
 observations and the distinction between confirmed ACPI data and inferred port
 pairing are in `USB_BRINGUP.md`.
+
+## GRUB filesystem correction (2026-09-02)
+
+The next physical test displayed GRUB correctly, but every entry failed before
+loading Linux. GRUB reported that the valid NP750_ROOT UUID did not exist and
+then could not open the kernel or DTB below `/boot`. No Linux log was produced.
+This proves the LCD and firmware framebuffer path worked, while the kernel was
+never entered.
+
+To remove GRUB's dependency on reading ext4, the current kernel, initramfs and
+DTB, plus the first-boot fallback set, are now mirrored under
+`NP750_EFI:/np750xqa/`. All menu entries search for the FAT label `NP750_EFI`
+and load their artifacts from that same partition. The Linux command line still
+uses the unchanged NP750_ROOT UUID for the real root filesystem.
+
+- rebuilt `EFI/BOOT/BOOTAA64.EFI` SHA-256:
+  `32fe3dd858107b88a1077b5791da0ae48ef9ceea2c9aadde882cf697d74220e1`
