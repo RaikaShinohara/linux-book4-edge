@@ -55,6 +55,40 @@
 };
 
 /*
+ * USB3/RHUB/MP1 is the external USB-A port used by the recovery stick. The
+ * factory ACPI resources for USB3 (QCOM0D08 at 0x0a400000) place its two
+ * eUSB2 repeaters on QUP_2_SE_2, which is i2c18 in the Linux DT numbering.
+ * MP1 is the second USB2 port, so pair usb_mp_hsphy1 with the second ACPI
+ * repeater resource: address 0x4f and TLMM GPIO 7.
+ *
+ * x1-crd.dtsi instead describes this repeater on i2c5 with GPIO 184. Keep
+ * that CRD-only device from probing and override the inherited PHY link.
+ */
+&eusb6_repeater {
+	status = "disabled";
+};
+
+&i2c18 {
+	clock-frequency = <400000>;
+
+	status = "okay";
+
+	usb_a_eusb_repeater: redriver@4f {
+		compatible = "nxp,ptn3222";
+		reg = <0x4f>;
+		#phy-cells = <0>;
+
+		vdd1v8-supply = <&vreg_l4b_1p8>;
+		vdd3v3-supply = <&vreg_l13b_3p0>;
+
+		reset-gpios = <&tlmm 7 GPIO_ACTIVE_LOW>;
+
+		pinctrl-0 = <&usb_a_eusb_reset_n>;
+		pinctrl-names = "default";
+	};
+};
+
+/*
  * The factory KDB KD156N2030A03 exposes a valid EDID and uses the standard
  * eDP AUX path. Replace the non-standard ATNA panel inherited from the CRD
  * with the generic eDP panel driver. The panel's ACPI profile reports an
@@ -88,6 +122,20 @@
 
 &pmk8550_pwm {
 	status = "okay";
+};
+
+&tlmm {
+	usb_a_eusb_reset_n: usb-a-eusb-reset-n-state {
+		pins = "gpio7";
+		function = "gpio";
+		drive-strength = <2>;
+		bias-disable;
+		output-low;
+	};
+};
+
+&usb_mp_hsphy1 {
+	phys = <&usb_a_eusb_repeater>;
 };
 
 /* Keep 3D acceleration out of the first display test; its firmware is absent. */
