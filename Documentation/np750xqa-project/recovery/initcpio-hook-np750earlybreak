@@ -1,6 +1,10 @@
 #!/usr/bin/ash
 
 run_earlyhook() {
+    if [ ! -r /sys/kernel/debug/devices_deferred ]; then
+        mount -t debugfs debugfs /sys/kernel/debug 2>/dev/null || true
+    fi
+
     echo
     echo "============================================================"
     echo "NP750XQA EARLY INITRAMFS SHELL"

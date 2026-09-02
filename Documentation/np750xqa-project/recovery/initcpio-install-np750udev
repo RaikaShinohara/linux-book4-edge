@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+
+build() {
+    map add_binary \
+        '/usr/lib/systemd/systemd-udevd' \
+        '/usr/bin/udevadm' \
+        '/usr/lib/udev/ata_id' \
+        '/usr/lib/udev/scsi_id' \
+        '/usr/lib/libkmod.so.2'
+
+    if [[ -n '/usr/sbin/systemd-tmpfiles' ]]; then
+        add_binary '/usr/sbin/systemd-tmpfiles'
+    fi
+
+    map add_udev_rule \
+        '50-udev-default.rules' \
+        '60-persistent-storage.rules' \
+        '64-btrfs.rules' \
+        '80-drivers.rules'
+
+    for f in /usr/lib/udev/hwdb.bin /etc/udev/hwdb.bin; do
+        [[ -f "$f" ]] && add_file "$f"
+    done
+
+    add_runscript
+}
+
+help() {
+    cat <<'EOF'
+Starts udev with a bounded settle wait and opens the NP750XQA post-udev shell.
+EOF
+}

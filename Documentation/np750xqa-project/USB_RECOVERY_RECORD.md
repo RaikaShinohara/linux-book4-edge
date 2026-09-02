@@ -230,3 +230,17 @@ provides it.
   `4533713a84dcb0ae4e5add0df2b145789d0ae34e067e90409bb33324e5f1b365`
 - loader with embedded early-break initramfs SHA-256:
   `277630401a94e6beba9804b18d2f781de43245425eb7cfb0e6fff5cdd53ebf4e`
+
+The early shell was reached and its keyboard worked. After `exit`, the video
+shows initramfs starting udev and retrying the deferred USB PHY chain; the
+recording ends only about 20--25 seconds later while the screen is black. The
+stock udev hook waits for its event queue without a bounded diagnostic stop,
+so the result does not prove a hard hang. The recovery image now mounts debugfs
+before the first shell and replaces the stock hook with `np750udev`: it limits
+`udevadm settle` to 15 seconds, prints block/deferred-device state and opens a
+second interactive shell immediately afterward.
+
+- bounded-udev initramfs SHA-256:
+  `a060265c08f0c9b004f02c926f9c0dcf042a6142e77052698ce6197297f1c00e`
+- loader with embedded bounded-udev initramfs SHA-256:
+  `10299a7b51fd111a2af20c8534bc3efe8d07d74a6280ad3e304da6031570b3b1`
