@@ -168,3 +168,12 @@ kernel hand-off entirely.
 - self-contained `EFI/BOOT/BOOTAA64.EFI` SHA-256:
   `980244e6e14e696e531814c69a12bf3d426ea6524630fb7f7e33059e5d9a8e80`
 - loader size: 83 MiB
+
+Video of the self-contained loader test confirms that GRUB loads the Image,
+initramfs and DTB. The EFI stub reports the initrd and DTB, then the display
+goes black immediately after `Exiting boot services...`. The default entry now
+enables the built-in EFI framebuffer early console, `initcall_debug` and
+`efi=novamap`. A second entry uses `efi=noruntime` to isolate EFI runtime setup.
+
+- early-console `EFI/BOOT/BOOTAA64.EFI` SHA-256:
+  `05bd5d5d3c07be5e5093736a556c2b52e7d7ebf7024b72f191c643df6a76dd5e`
