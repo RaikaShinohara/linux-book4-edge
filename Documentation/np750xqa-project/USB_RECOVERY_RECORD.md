@@ -314,3 +314,15 @@ Installed automatic-boot artifacts:
   `fae58e417a9e8c94ed393086fead7108a09524425133eb35245e5ff45b0fcfdc`
 - self-contained `EFI/BOOT/BOOTAA64.EFI` SHA-256:
   `0cfb1608c7ea4edebcbe691e30f7a59504d5b22c19fcc12186d38fadf90719c2`
+
+The long automatic-boot test still produced no log. The ext4 superblock also
+retained its July 24 last-mount and last-write timestamps, proving that the
+root partition was never discovered or mounted; the activity LED represented
+controller retries only. The earlier trace exposes a firmware dependency
+cycle: the PM8550 `regulators-0` provider needs `vreg_s5j_1p2`, while that
+provider's group waits for `regulators-0/bob1`. The recovery entries now use
+`fw_devlink=off` so Linux regulator drivers can resolve their own probe order
+without firmware-created device links holding both sides of that cycle.
+
+- loader with the dependency-cycle workaround SHA-256:
+  `47b624f4eae916db032a786fe9276e024ab9235456ea9bd99cc673c3e1a319c4`
