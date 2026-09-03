@@ -22,22 +22,29 @@
 	status = "disabled";
 };
 
-/*
- * The recovery stick is USB 2.0.  Do not make the whole multiport DWC3 wait
- * for the SuperSpeed QMP PHYs: the diagnostic trace shows a400000.usb blocked
- * specifically by 88e5000.phy while its vdda-phy regulator is unavailable.
- */
+/* Match the single-port MP0 topology used by the working Samsung 14" DTS. */
 &usb_mp_dwc3 {
-	phys = <&usb_mp_hsphy0>, <&usb_mp_hsphy1>;
-	phy-names = "usb2-0", "usb2-1";
-	maximum-speed = "high-speed";
+	phys = <&usb_mp_hsphy0>, <&usb_mp_qmpphy0>;
+	phy-names = "usb2-0", "usb3-0";
 };
 
-/* Preserve the USB-A repeater state established by UEFI for this test. */
-&usb_mp_hsphy1 {
-	/delete-property/ phys;
+&eusb6_repeater {
+	status = "okay";
 };
 
 &usb_a_eusb_repeater {
+	status = "disabled";
+};
+
+&usb_mp_hsphy0 {
+	phys = <&eusb6_repeater>;
+};
+
+/* x1-crd enables MP1 as well; the known-working Samsung DTS does not. */
+&usb_mp_hsphy1 {
+	status = "disabled";
+};
+
+&usb_mp_qmpphy1 {
 	status = "disabled";
 };

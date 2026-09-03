@@ -273,3 +273,26 @@ board DTB.
   `e20399659c747b5ed87af1873f192f58b84cc09d2274ac8dc5cde2822b76d4fa`
 - loader embedding the USB2-only recovery DTB SHA-256:
   `a18c8e9c5f6eb54957e2deff21d3db008b58d8877d893c8e48fd2d5394f4789a`
+
+## Cross-check against working Galaxy Book4 Edge trees
+
+The USB2-only experiment regressed at the early shell around the kernel's
+unused-regulator shutdown. A review of every current branch in
+`zensanp/linux-book4-edge` found that the working Samsung 14-inch DTS does not
+use the inferred MP1/i2c18/GPIO7 route. It limits the multiport controller to
+MP0 (`usb_mp_hsphy0` plus `usb_mp_qmpphy0`) and connects the high-speed PHY to
+`eusb6_repeater` at i2c5 address 0x4f with GPIO184. Saddytech's bring-up notes
+also confirm that port/controller topology must be followed rather than
+guessed and that some physical ports remain unusable under Linux.
+
+The next recovery DTB therefore mirrors that known Samsung topology: MP0 is
+the only DWC3 port, the inherited CRD `eusb6_repeater` is restored, the
+NP750XQA MP1 hypothesis is disabled, and the unused MP1 PHY nodes inherited
+from x1-crd are disabled. The normal NP750XQA DTB remains unchanged.
+
+- Zensanp-topology recovery DTB SHA-256:
+  `fae58e417a9e8c94ed393086fead7108a09524425133eb35245e5ff45b0fcfdc`
+- loader embedding the Zensanp-topology recovery DTB SHA-256:
+  `7fe3b64e237529500d44fc36656b12bdd0fc12b5a1d735e8b0a3fb683d46ecd0`
+- previous loader backup:
+  `EFI/BOOT/BOOTAA64.EFI.pre-zensanp-mp0`
