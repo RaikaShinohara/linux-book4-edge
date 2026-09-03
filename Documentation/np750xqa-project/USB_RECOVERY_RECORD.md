@@ -296,3 +296,21 @@ from x1-crd are disabled. The normal NP750XQA DTB remains unchanged.
   `7fe3b64e237529500d44fc36656b12bdd0fc12b5a1d735e8b0a3fb683d46ecd0`
 - previous loader backup:
   `EFI/BOOT/BOOTAA64.EFI.pre-zensanp-mp0`
+
+The MP0 shell trace identifies `regulators-0` failing to register `ldo12` with
+`-EPROBE_DEFER`; that group consequently withholds `bob1` and `ldo13`, which
+feed the MP0 PHY/repeater chain. The diagnostic itself was distorting this
+sequence: `deferred_probe_timeout=5` expired while the user remained in the
+early shell and the global driver-core dynamic trace greatly slowed the
+asynchronous regulator probes. The automatic-boot image removes both options,
+drops the early interactive hook, retains the unused-clock/power/regulator
+guards, and leaves udev running while `rootwait` waits for the removable root.
+
+Installed automatic-boot artifacts:
+
+- initramfs SHA-256:
+  `9f287324d9224cddf3943fe2f77976c55ba4c08a4d5a73e8a770b20bea493a36`
+- recovery DTB SHA-256:
+  `fae58e417a9e8c94ed393086fead7108a09524425133eb35245e5ff45b0fcfdc`
+- self-contained `EFI/BOOT/BOOTAA64.EFI` SHA-256:
+  `0cfb1608c7ea4edebcbe691e30f7a59504d5b22c19fcc12186d38fadf90719c2`
