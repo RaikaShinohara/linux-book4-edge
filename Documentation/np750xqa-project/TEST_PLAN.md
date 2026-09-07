@@ -55,11 +55,15 @@ Record the highest completed stage rather than reporting only "booted" or
    `Samsung Galaxy Book4 Edge (NP750XQA)`.
 4. Initramfs starts and exposes a shell or automatic logger.
 5. USB host and removable storage enumerate.
-6. UFS host `0x01d84000` and its PHY probe without a fatal timeout.
-7. Kioxia UFS media appears but remains unmounted or read-only.
-8. I2C0 and the Samsung keyboard at address `0x05` probe.
-9. PCIe controllers enumerate; FastConnect probing may be deferred.
-10. ADSP, CDSP and GPU errors are captured but are not first-boot blockers.
+6. The expected external ext4 root is mounted at `/sysroot` in initramfs.
+7. `switch_root` executes `/sbin/init` from that external root.
+8. systemd runs services and reaches `multi-user.target`.
+9. `getty@tty1` offers a login and the prepared account can open a shell.
+
+UFS, PCIe, remote processors and native display are separate hardware milestones,
+not prerequisites for declaring an external-root text boot successful. Record
+their failures, but do not require internal UFS to mount. A firstboot logger
+marker shows real-root userspace; it alone does not prove multi-user completion.
 
 ## Data to collect
 
@@ -94,9 +98,9 @@ The next AI should classify failures in this order:
 
 1. Boot packaging or DTB hand-off.
 2. Kernel configuration and missing built-in storage/USB drivers.
-3. UFS power, PHY and reset sequence.
-4. External-root and initramfs timing.
-5. Keyboard I2C and interrupt mapping.
-6. PCIe and firmware-dependent subsystems.
+3. USB suppliers (regulators, clocks, I2C and PHY), then enumeration.
+4. External-root integrity, UUID, initramfs timing and mount.
+5. AArch64 init/shell executables, dynamic loader, systemd services and login.
+6. Keyboard/display visibility; UFS, PCIe and other firmware-dependent subsystems.
 
 Change one hardware assumption at a time and keep every test reproducible.

@@ -7,14 +7,15 @@
    USB-A port.
 4. Use Samsung's one-time firmware boot menu and select the removable USB. Do
    not create a permanent boot entry.
-5. In GRUB, first select `NP750XQA USB-A premount shell (diagnostic)`. It should
-   stop before mounting root. Follow `USB_BRINGUP.md`; type `exit` only after
-   checking whether the external disk and root UUID exist.
-6. After USB-A is proven, test `NP750XQA recovery Linux (read-only first
-   mount)` and then the display-specific entries.
-7. The internal display is experimental. The new kernel should hand the console
-   from simpledrm to MSM DRM after reading the KDB EDID. A black screen is still
-   not proof of a kernel hang; do not repeatedly reboot.
+5. Select `NP750XQA USB test 3 - board MP1 route (default)` for automatic
+   external-root boot toward a text login. Follow [FIRST_FULL_BOOT.md](FIRST_FULL_BOOT.md).
+6. If needed, select `NP750XQA USB test 3 - premount shell` to inspect USB
+   before the root mount (`exit` continues). The separate `real-root shell
+   before systemd` entry tests the mounted root (`exec /sbin/init` continues;
+   do not exit that PID 1 shell).
+7. The default recovery DTB retains the firmware display experimentally.
+   Native eDP entries are separate tests. A black screen is still not proof
+   of a kernel hang; do not repeatedly reboot.
 8. Allow several minutes for the first boot and log capture. Stop immediately
    for abnormal heat, fan, smell, charging behaviour, repeated resets or an
    apparent UFS power-cycle loop.

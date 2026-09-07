@@ -1,6 +1,8 @@
 # USB test 3: NP750XQA, 2026-09-07
 
 Branch: `codex/np750xqa-usb-test-3`, based on USB test 2 at `7475666df`.
+Latest full-root preflight, additional configuration checks and diagnostic menu:
+[FIRST_FULL_BOOT.md](FIRST_FULL_BOOT.md).
 This is the current continuation guide. Earlier build/media hashes describe
 older artifacts, not this branch. No new kernel or USB medium was built here.
 

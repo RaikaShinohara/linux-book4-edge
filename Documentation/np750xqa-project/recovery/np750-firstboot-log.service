@@ -6,6 +6,9 @@ After=local-fs.target
 Type=oneshot
 ExecStart=/usr/local/sbin/np750-firstboot-log
 RemainAfterExit=yes
+TimeoutStartSec=30
+StandardOutput=journal+console
+StandardError=journal+console
 
 [Install]
 WantedBy=multi-user.target

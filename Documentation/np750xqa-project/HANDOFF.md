@@ -1,6 +1,7 @@
 # Handoff to the next AI agent
 
-Latest continuation: [USB_TEST_3.md](USB_TEST_3.md), branch
+Latest continuation: [FIRST_FULL_BOOT.md](FIRST_FULL_BOOT.md) and
+[USB_TEST_3.md](USB_TEST_3.md), branch
 `codex/np750xqa-usb-test-3`. Read its current findings and build/test checklist
 before the historical objectives below.
 

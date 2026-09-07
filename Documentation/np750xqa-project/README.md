@@ -33,18 +33,19 @@ build requirements and test order. The display milestones below are historical.
 
 ## Read order
 
-1. [HANDOFF.md](HANDOFF.md) -- objective, completed work and hard constraints.
-0. [USB_TEST_3.md](USB_TEST_3.md) -- current USB test branch, evidence and build order.
-2. [HARDWARE.md](HARDWARE.md) -- evidence captured from the physical machine.
-3. [NEXT_STEPS.md](NEXT_STEPS.md) -- work expected from the next AI agent.
-4. [DISPLAY_BRINGUP.md](DISPLAY_BRINGUP.md) -- display evidence and current
+1. [FIRST_FULL_BOOT.md](FIRST_FULL_BOOT.md) -- current full-root preflight and diagnostic sequence.
+2. [USB_TEST_3.md](USB_TEST_3.md) -- USB test branch, evidence and build order.
+3. [HANDOFF.md](HANDOFF.md) -- objective, completed work and hard constraints.
+4. [HARDWARE.md](HARDWARE.md) -- evidence captured from the physical machine.
+5. [NEXT_STEPS.md](NEXT_STEPS.md) -- work expected from the next AI agent.
+6. [DISPLAY_BRINGUP.md](DISPLAY_BRINGUP.md) -- display evidence and current
    implementation assumptions.
-5. [SECOND_BOOT_RESULT.md](SECOND_BOOT_RESULT.md) -- latest physical result,
+7. [SECOND_BOOT_RESULT.md](SECOND_BOOT_RESULT.md) -- latest physical result,
    revised HPD/backlight implementation and CPU/hypervisor diagnostics.
-6. [USB_BRINGUP.md](USB_BRINGUP.md) -- USB-A failure evidence, corrected
+8. [USB_BRINGUP.md](USB_BRINGUP.md) -- USB-A failure evidence, corrected
    repeater topology, built-in driver chain and premount diagnostic procedure.
-7. [TEST_PLAN.md](TEST_PLAN.md) -- recoverable first-boot and logging plan.
-8. [../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst](../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst)
+9. [TEST_PLAN.md](TEST_PLAN.md) -- recoverable first-boot and logging plan.
+10. [../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst](../arch/arm64/samsung-galaxy-book4-edge-x1p42100.rst)
    -- user-facing kernel build notes.
 
 The latest workstation build and validation results are recorded in

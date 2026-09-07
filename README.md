@@ -21,6 +21,9 @@ The current USB test branch is `codex/np750xqa-usb-test-3`; read the
 building or preparing media. The features below remain expectations unless
 explicitly identified as observed.
 
+The current full-root preparation and diagnostic sequence is in
+[FIRST_FULL_BOOT.md](Documentation/np750xqa-project/FIRST_FULL_BOOT.md).
+
 ### Expected to work in the initial bring-up
 
 - **CPU and memory:** the X1P42100 SoC description, interrupt controller,
