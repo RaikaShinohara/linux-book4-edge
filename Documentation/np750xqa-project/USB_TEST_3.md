@@ -174,6 +174,30 @@ explicit premount-shell entry only when prepared to type `exit`.
 
 ## Sources checked
 
+### Follow-up: local Linux laboratory now available
+
+Later on 2026-09-07, the user authorized a new Linux environment on E:.
+WSL2 `NP750-Lab` (Alpine 3.22.5 AArch64) was installed at
+`E:\Linux\wsl\NP750-Lab`; the old Debian registration was left untouched.
+Instructions and the validation script are in `E:\Linux\wsl\README.md` and
+`E:\Linux\wsl\validate-usb3.sh`. Start with `wsl -d NP750-Lab`.
+
+Against commit `617dab4dd`, the log tests passed under actual BusyBox ash and
+both DTS files compiled with GCC 14.2 / DTC 1.7.2. The normal DTB hash is
+`16cdcd18574c7c3d536ccfb0536c7e22dcecac0ad308bdbd3e823ee803d36c5e`;
+the recovery DTB hash is
+`1dc66e7fdc8073f9c4f7a7523c75138c3201e20a186df2f3f2e64053cce46a5e`.
+Warnings are retained in `E:\Linux\wsl\results`; schema validation, resolved
+Kconfig, Image/modules and physical boot remain pending. Restart and automatic
+mounting of E: were verified.
+
+E: is FAT32, so its per-file limit constrains VHDX growth to below 4 GiB.
+The lab currently occupies about 492 MiB and is for small validations, not a
+full kernel build. WSL's displayed virtual capacity is not usable disk space.
+This environment cannot test the laptop's native USB/panel drivers.
+
+### References
+
 Local kernel sources: `arch/arm64/boot/dts/qcom/x1-crd.dtsi`, NP750XQA normal
 and recovery DTS, `drivers/regulator/{core,qcom-rpmh-regulator}.c`,
 `drivers/usb/dwc3/core.c`, and the existing hardware/boot records in this folder.
