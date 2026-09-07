@@ -7,6 +7,11 @@ stamp=$(date -u +%Y%m%dT%H%M%SZ)
 dest="$log_dir/$stamp"
 
 mkdir -p "$dest"
+echo 'NP750XQA stage: distro-userspace'
+echo 'systemd executed np750-firstboot-log on the real root' >"$dest/stage.txt"
+if [ -d /run/initramfs/np750xqa ]; then
+    cp -R /run/initramfs/np750xqa "$dest/early-snapshots" || true
+fi
 dmesg >"$dest/dmesg.txt" 2>&1 || true
 cat /proc/cmdline >"$dest/proc-cmdline.txt" 2>&1 || true
 cat /proc/iomem >"$dest/proc-iomem.txt" 2>&1 || true
@@ -23,8 +28,15 @@ if [ -f /run/initramfs/init.log ]; then
     cp /run/initramfs/init.log "$dest/initramfs-init.log" || true
 fi
 
-find /sys/bus/usb/devices -maxdepth 2 -type f -print \
-    >"$dest/usb-sysfs-files.txt" 2>&1 || true
+for dev in /sys/bus/usb/devices/*; do
+    [ -e "$dev" ] || continue
+    echo "=== ${dev##*/} ==="
+    for attr in idVendor idProduct product speed busnum devnum authorized; do
+        [ -r "$dev/$attr" ] || continue
+        printf '%s: ' "$attr"
+        cat "$dev/$attr" || true
+    done
+done >"$dest/usb-devices.txt" 2>&1
 
 for pstore_file in /sys/fs/pstore/*; do
     [ -f "$pstore_file" ] || continue

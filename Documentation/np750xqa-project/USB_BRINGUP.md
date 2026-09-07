@@ -44,13 +44,15 @@ RPMh regulators, and QUP may expose I2C18 only through GPI DMA when its FIFO
 interface is disabled by firmware. Any one of those missing providers can
 defer the probe before the initramfs can see the removable root.
 
-`book4_defconfig` therefore requests the complete dependency chain built in:
+`book4_defconfig` requests the audited dependency chain built in; this is not
+proof that every hardware supplier is correct:
 
 ```text
 CONFIG_CLK_X1E80100_GCC=y
 CONFIG_CLK_X1E80100_TCSRCC=y
 CONFIG_PINCTRL_X1E80100=y
 CONFIG_REGULATOR_QCOM_RPMH=y
+CONFIG_REGULATOR_FIXED_VOLTAGE=y
 CONFIG_INTERCONNECT_QCOM_X1E80100=y
 CONFIG_QCOM_GPI_DMA=y
 CONFIG_I2C_QCOM_GENI=y
@@ -83,7 +85,7 @@ sh Documentation/np750xqa-project/recovery/check-usb-root-config.sh \
   out/.config
 ```
 
-The checker must report all 21 symbols as built in. It covers the clock,
+The checker must report all 22 symbols as built in. It covers the clock,
 pinctrl, regulator, interconnect, optional I2C DMA, controller, PHY, block,
 filesystem and diagnostic-keyboard paths. Then run the existing schema checks
 and record SHA-256 hashes for `Image`, the DTB and `.config`. Install the
@@ -103,6 +105,9 @@ it is not a substitute for compiling the matched `Image`, modules and DTB on
 the Arch workstation.
 
 ## First diagnostic entry
+
+The following describes an earlier test menu. For the current automatic MP1
+test, optional premount shell and corrected logging, use [USB_TEST_3.md](USB_TEST_3.md).
 
 Boot `NP750XQA USB-A premount shell (diagnostic)` first. It uses `nomodeset`,
 full mkinitcpio logging, disables USB autosuspend, tries the legacy USB

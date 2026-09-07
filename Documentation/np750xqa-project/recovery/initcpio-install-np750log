@@ -6,6 +6,7 @@ build() {
 	add_binary umount
 	add_binary dmesg
 	add_binary sync
+	add_binary timeout
 	add_runscript
 }
 

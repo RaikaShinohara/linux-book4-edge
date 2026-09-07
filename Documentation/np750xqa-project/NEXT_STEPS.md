@@ -150,3 +150,7 @@ The inherited CRD ATNA driver and its unconfirmed enable GPIO remain removed.
 The current implementation uses generic eDP, real DP3 HPD and the PMK8550 PWM
 path independently indicated by the Samsung DSDT and other Purwa LCD devices.
 See `SECOND_BOOT_RESULT.md` for the exact interpretation of each GRUB entry.
+# Current continuation
+
+Use [USB_TEST_3.md](USB_TEST_3.md) for the USB test 3 build and test order.
+The earlier plan below remains background, not the current default GRUB menu.

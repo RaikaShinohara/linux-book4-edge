@@ -1,41 +1,25 @@
 #!/usr/bin/ash
 
 run_earlyhook() {
+    mkdir -p /run/tmpfiles.d
     if command -v /usr/sbin/systemd-tmpfiles >/dev/null 2>&1; then
         kmod static-nodes --format=tmpfiles --output=/run/tmpfiles.d/kmod.conf
         /usr/sbin/systemd-tmpfiles --prefix=/dev --create --boot
     fi
-    /usr/lib/systemd/systemd-udevd --daemon --resolve-names=never
-    udevd_running=1
+    if /usr/lib/systemd/systemd-udevd --daemon --resolve-names=never; then
+        udevd_running=1
+    else
+        udevd_running=0
+        echo 'NP750XQA: udev daemon failed to start'
+    fi
 }
 
 run_hook() {
-    msg ":: Triggering uevents (NP750XQA bounded diagnostic)..."
+    msg ':: Triggering uevents (NP750XQA bounded diagnostic)...'
     udevadm trigger --action=add --type=subsystems
     udevadm trigger --action=add --type=devices
-    udevadm settle --timeout=15 || echo "udev settle timed out after 15 seconds"
-
-    echo "NP750XQA: recording post-udev state and continuing boot"
-
-    mkdir -p /run/np750-efi
-    efi_dev="$(readlink -f /dev/disk/by-label/NP750_EFI 2>/dev/null)"
-    if [ -b "$efi_dev" ] && mount -o rw "$efi_dev" /run/np750-efi; then
-        logdir=/run/np750-efi/np750xqa-early-logs/latest-post-udev
-        mkdir -p "$logdir"
-        cat /proc/cmdline >"$logdir/cmdline.txt"
-        dmesg >"$logdir/dmesg.txt"
-        cat /sys/kernel/debug/devices_deferred \
-            >"$logdir/devices-deferred.txt" 2>&1 || true
-        ls -l /dev/sd* /dev/disk/by-label /dev/disk/by-uuid \
-            >"$logdir/block-devices.txt" 2>&1 || true
-        find /sys/bus/usb/devices -maxdepth 2 -type f \
-            >"$logdir/usb-sysfs-files.txt" 2>&1 || true
-        sync
-        umount /run/np750-efi
-        echo "NP750XQA: post-udev log saved to NP750_EFI"
-    else
-        echo "NP750XQA: NP750_EFI was not visible after udev"
-    fi
+    udevadm settle --timeout=15 || echo 'NP750XQA: udev settle timed out after 15 seconds'
+    echo 'NP750XQA: udev hook finished; continuing toward root discovery'
 }
 
 run_cleanuphook() {

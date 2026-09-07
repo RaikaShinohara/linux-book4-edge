@@ -13,10 +13,13 @@ machine is in [Documentation/np750xqa-project](Documentation/np750xqa-project/RE
 
 ## X1P42100 NP750XQA status
 
-**None of the hardware features below has been confirmed working yet.** Two
-physical boots reached at least early Linux output but the internal screen then
-became black and no saved kernel log proved later boot stages. The entries below
-describe what is expected from the current Device Tree and kernel configuration.
+**Experimental: full distro boot and USB root are not yet confirmed.** Later
+tests reached the initramfs shell with a working keyboard, not just kernel
+output. This does not establish native panel support or a mounted USB root.
+The current USB test branch is `codex/np750xqa-usb-test-3`; read the
+[USB test 3 hand-off](Documentation/np750xqa-project/USB_TEST_3.md) before
+building or preparing media. The features below remain expectations unless
+explicitly identified as observed.
 
 ### Expected to work in the initial bring-up
 

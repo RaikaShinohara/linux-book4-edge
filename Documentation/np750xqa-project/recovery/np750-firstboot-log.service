@@ -1,7 +1,6 @@
 [Unit]
 Description=Capture NP750XQA first-boot diagnostics on external root
-Wants=systemd-udev-settle.service
-After=local-fs.target systemd-udev-settle.service
+After=local-fs.target
 
 [Service]
 Type=oneshot

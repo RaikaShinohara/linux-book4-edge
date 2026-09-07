@@ -1,19 +1,85 @@
 #!/usr/bin/ash
 
+# Subshell keeps hook-local variables out of mkinitcpio's /init namespace.
+np750_snapshot() (
+    stage=$1
+    boot_id=$(cat /proc/sys/kernel/random/boot_id)
+    ram=/run/initramfs/np750xqa
+    dest=$ram/$stage
+    mkdir -p "$dest"
+    echo "NP750XQA stage: $stage (snapshots in $ram)"
+    cat /proc/uptime >"$dest/uptime.txt"
+    cat /proc/cmdline >"$dest/cmdline.txt"
+    cat /proc/mounts >"$dest/mounts.txt"
+    dmesg >"$dest/dmesg.txt" 2>&1
+    cat /sys/kernel/debug/devices_deferred >"$dest/devices-deferred.txt" 2>&1
+    ls -l /sys/class/block /dev/disk/by-uuid >"$dest/block-devices.txt" 2>&1
+    # Sysfs entries are symlinks; read explicit attributes, avoiding cycles.
+    for dev in /sys/bus/usb/devices/*; do
+        [ -e "$dev" ] || continue
+        echo "=== ${dev##*/} ==="
+        for attr in idVendor idProduct product speed busnum devnum authorized; do
+            [ -r "$dev/$attr" ] || continue
+            printf '%s: ' "$attr"
+            cat "$dev/$attr"
+        done
+    done >"$dest/usb-devices.txt" 2>&1
+    [ ! -f /run/initramfs/init.log ] || cp /run/initramfs/init.log "$dest/init.log"
+
+    # Early RAM capture must not wait for the USB under investigation.
+    [ "$stage" != early-initramfs ] || exit 0
+    # Only the selected recovery ESP, and only on a USB ancestor.
+    # Never fall back to an internal ESP or an arbitrary label match.
+    uuid=$(getarg np750.loguuid)
+    [ -n "$uuid" ] || uuid=2A8E-8A5D
+    device=$(findfs "UUID=$uuid" 2>"$dest/persist-error.txt") || {
+        echo "NP750XQA: ESP unavailable; $stage retained in RAM only"
+        exit 0
+    }
+    device=$(readlink -f "$device")
+    syspath=$(readlink -f "/sys/class/block/${device##*/}")
+    case "$syspath" in
+        */usb[0-9]*/*) ;;
+        *) echo 'Refusing non-USB log destination' >"$dest/persist-error.txt"; exit 0 ;;
+    esac
+    if grep -q ' /run/np750-efi ' /proc/mounts; then
+        echo 'Previous ESP mount still present; refusing to stack mounts' >"$dest/persist-error.txt"
+        exit 0
+    fi
+    mkdir -p /run/np750-efi
+    if timeout -k 1 5 mount -t vfat -o rw,nosuid,nodev,noexec "$device" /run/np750-efi \
+        2>"$dest/persist-error.txt"; then
+        target=/run/np750-efi/np750xqa-early-logs/$boot_id
+        mkdir -p "$target"
+        if timeout -k 1 10 cp -R "$ram/." "$target/"; then
+            echo "NP750XQA: $stage copied to USB ESP; flushing"
+        else
+            echo "NP750XQA: USB log copy failed; RAM snapshots remain"
+        fi
+        timeout -k 1 5 umount /run/np750-efi || echo 'NP750XQA: ESP unmount failed'
+    else
+        echo "NP750XQA: ESP mount failed; $stage retained in RAM only"
+    fi
+    # A diagnostic failure must not become a failure of the boot hook itself.
+    exit 0
+)
+
+run_earlyhook() {
+    mkdir -p /sys/kernel/debug
+    mount -t debugfs debugfs /sys/kernel/debug 2>/dev/null || true
+    np750_snapshot early-initramfs
+}
+
 run_hook() {
-	(
-		for delay in 10 20 30 60; do
-			sleep "$delay"
+    np750_snapshot before-root-resolution
+}
 
-			device=$(findfs LABEL=NP750_EFI 2>/dev/null) || continue
-			mkdir -p /run/np750-efi
-			mount -t vfat -o rw,sync "$device" /run/np750-efi 2>/dev/null || continue
+run_latehook() {
+    # mkinitcpio runs this after mount_handler even if mounting failed.
+    # mounts.txt, not this marker alone, establishes a successful root mount.
+    np750_snapshot after-root-mount-attempt
+}
 
-			mkdir -p /run/np750-efi/np750xqa-early-logs
-			dmesg >"/run/np750-efi/np750xqa-early-logs/dmesg-${delay}s.txt" 2>&1
-			cat /proc/cmdline >"/run/np750-efi/np750xqa-early-logs/proc-cmdline.txt" 2>&1
-			sync
-			umount /run/np750-efi 2>/dev/null || true
-		done
-	) &
+run_emergencyhook() {
+    np750_snapshot emergency
 }

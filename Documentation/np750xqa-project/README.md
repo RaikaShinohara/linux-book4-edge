@@ -9,6 +9,10 @@ need to repeat the project history.
 
 ## Repository state
 
+Current test branch: `codex/np750xqa-usb-test-3`, based on `7475666df`.
+Read [USB_TEST_3.md](USB_TEST_3.md) first for the latest evidence, changes,
+build requirements and test order. The display milestones below are historical.
+
 - Fork: <https://github.com/RaikaShinohara/linux-book4-edge>
 - Working branch: `codex/np750xqa-display`
 - Display branch base: `codex/np750xqa-build-fixes` at
@@ -30,6 +34,7 @@ need to repeat the project history.
 ## Read order
 
 1. [HANDOFF.md](HANDOFF.md) -- objective, completed work and hard constraints.
+0. [USB_TEST_3.md](USB_TEST_3.md) -- current USB test branch, evidence and build order.
 2. [HARDWARE.md](HARDWARE.md) -- evidence captured from the physical machine.
 3. [NEXT_STEPS.md](NEXT_STEPS.md) -- work expected from the next AI agent.
 4. [DISPLAY_BRINGUP.md](DISPLAY_BRINGUP.md) -- display evidence and current
@@ -49,7 +54,7 @@ The prepared removable recovery system is described in
 [USB_RECOVERY_RECORD.md](USB_RECOVERY_RECORD.md), and the physical procedure is
 in [FIRST_BOOT.md](FIRST_BOOT.md).
 
-## Current milestone
+## Earlier display milestone (superseded by USB_TEST_3.md)
 
 The repository contains a conservative first-boot DTB, not a proven hardware
 port. It is intended to reach a recovery initramfs with USB, internal UFS and

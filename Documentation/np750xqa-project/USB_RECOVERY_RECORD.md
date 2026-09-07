@@ -258,8 +258,9 @@ focused entries no longer request a premount break.
 - loader with embedded automatic-log initramfs SHA-256:
   `15019077ac5733594c5f7e9c7394918bb253b131dd4a1e89134db800211cb04c`
 
-No automatic file was present after that test, proving that the LED flashes
-were controller retries rather than successful block-device enumeration. The
+No automatic file was present after that test. This does not establish whether
+the LED flashes were controller retries or successful enumeration: the logger
+also depends on userspace progress and a writable FAT mount. The
 last readable deferred-probe report identifies the direct chain:
 `a400000.usb` waits for `88e5000.phy`, and that SuperSpeed PHY reports
 `Failed to get supply 'vdda-phy'`. The recovery stick is USB 2.0, so the next
@@ -316,13 +317,13 @@ Installed automatic-boot artifacts:
   `0cfb1608c7ea4edebcbe691e30f7a59504d5b22c19fcc12186d38fadf90719c2`
 
 The long automatic-boot test still produced no log. The ext4 superblock also
-retained its July 24 last-mount and last-write timestamps, proving that the
-root partition was never discovered or mounted; the activity LED represented
-controller retries only. The earlier trace exposes a firmware dependency
-cycle: the PM8550 `regulators-0` provider needs `vreg_s5j_1p2`, while that
-provider's group waits for `regulators-0/bob1`. The recovery entries now use
-`fw_devlink=off` so Linux regulator drivers can resolve their own probe order
-without firmware-created device links holding both sides of that cycle.
+retained its July 24 last-mount and last-write timestamps. These observations
+do not exclude enumeration or a read-only mount, and do not identify LED
+activity as retries. A regulator dependency cycle was proposed as a hypothesis,
+not established by the available evidence. The recovery entries used
+`fw_devlink=off` to test firmware-created device links; this does not bypass
+actual regulator supply dependencies. See `USB_TEST_3.md` for the subsequent
+source audit, fixed-regulator change and controlled comparison.
 
 - loader with the dependency-cycle workaround SHA-256:
   `47b624f4eae916db032a786fe9276e024ab9235456ea9bd99cc673c3e1a319c4`

@@ -22,29 +22,8 @@
 	status = "disabled";
 };
 
-/* Match the single-port MP0 topology used by the working Samsung 14" DTS. */
-&usb_mp_dwc3 {
-	phys = <&usb_mp_hsphy0>, <&usb_mp_qmpphy0>;
-	phy-names = "usb2-0", "usb3-0";
-};
-
-&eusb6_repeater {
-	status = "okay";
-};
-
-&usb_a_eusb_repeater {
-	status = "disabled";
-};
-
-&usb_mp_hsphy0 {
-	phys = <&eusb6_repeater>;
-};
-
-/* x1-crd enables MP1 as well; the known-working Samsung DTS does not. */
-&usb_mp_hsphy1 {
-	status = "disabled";
-};
-
-&usb_mp_qmpphy1 {
-	status = "disabled";
-};
+/*
+ * Inherit this board's USB topology, including the MP1 repeater. Windows PnP
+ * places the recovery stick at USB3/RHUB/MP1 on NP750XQA. The Samsung X Elite
+ * 14-inch MP0/i2c5/GPIO184 experiment is not evidence for this board's wiring.
+ */

@@ -8,7 +8,7 @@ build() {
         '/usr/lib/udev/scsi_id' \
         '/usr/lib/libkmod.so.2'
 
-    if [[ -n '/usr/sbin/systemd-tmpfiles' ]]; then
+    if [[ -x '/usr/sbin/systemd-tmpfiles' ]]; then
         add_binary '/usr/sbin/systemd-tmpfiles'
     fi
 
@@ -27,6 +27,6 @@ build() {
 
 help() {
     cat <<'EOF'
-Starts udev with a bounded settle wait and opens the NP750XQA post-udev shell.
+Starts udev with a bounded settle wait, then continues automatically.
 EOF
 }
