@@ -336,9 +336,8 @@ The Arch workstation fetched and checked out
 `out-usb3` completed for `6.17.0-rc4+`; the 60 resolved-configuration checks,
 logger mock suite, GRUB syntax check, Image/modules build and both board DTB
 targets passed. The targeted Qualcomm binding and `CHECK_DTBS` validation also
-passed for both DTBs with dtschema 2026.6. The stripped module staging tree contains 202 modules plus
-the matching built-in metadata. Rootfs, initramfs and final standalone-EFI
-validation remain pending until the identified Kingston medium is attached.
+passed for both DTBs with dtschema 2026.6. The stripped module staging tree
+contains 202 modules plus the matching built-in metadata.
 
 - resolved `.config` SHA-256:
   `2c9cca784de5df76320ccc35ec32a2c778347bcd363528c44b616822f25137f7`
@@ -350,3 +349,32 @@ validation remain pending until the identified Kingston medium is attached.
   `f555d72918b5dcff57f9904c6aa49193cc924eb4c8c86f571546fdac39b9cf51`
 - GRUB configuration SHA-256:
   `effcdff7261e588bc710e0c832f572fd677d9029627775ba54f42624acb31a9f`
+
+## USB test 3 media installation (2026-09-12)
+
+The Kingston DT 101 II was positively identified as `/dev/sdd` by USB
+transport, 7.5 GiB capacity and the expected partition UUIDs. An initial
+read-only `e2fsck` found inconsistent free-block/free-inode counters and a
+pending orphan journal state on `NP750_ROOT`; an offline repair completed and
+a second full read-only check passed. `NP750_EFI` passed `fsck.fat -n`.
+
+The matching modules, Image, both DTBs, recovery hooks, logger and systemd
+unit were installed. The ARM64 rootfs preflight passed under QEMU, including
+execution of systemd/udev, external-only fstab, enabled tty1 getty, logger and
+login-account prerequisites. The previous loader, kernel artifacts and module
+tree were retained as `.usb-test2` backups on the ext4 root.
+
+The generated initramfs reports mkinitcpio 41 and kernel `6.17.0-rc4+`. Its
+extracted `/init`, BusyBox tools and both custom hooks are executable; hook
+contents match the installed sources. GRUB accepted the installed menu, and
+all nine NP750XQA entries were found in the standalone loader.
+
+The first remounted read-back found four stale bytes in the loose FAT Image at
+offset 39,521,793. A full synchronous rewrite, device-buffer flush, FAT check
+and second read-only mount then matched the ext4/source Image byte for byte.
+The standalone EFI matched throughout and is independent of that loose copy.
+
+- initramfs SHA-256:
+  `3d03f9f361df6e928dec5d543bfa7336c00aa78f5ab34498f454e970ef82c948`
+- standalone `EFI/BOOT/BOOTAA64.EFI` SHA-256:
+  `d9769f97681637d86a1cfed96180051ad3523f6569275063f750f52b36ad36bc`
