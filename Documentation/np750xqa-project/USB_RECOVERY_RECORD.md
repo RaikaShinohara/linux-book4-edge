@@ -327,3 +327,25 @@ source audit, fixed-regulator change and controlled comparison.
 
 - loader with the dependency-cycle workaround SHA-256:
   `47b624f4eae916db032a786fe9276e024ab9235456ea9bd99cc673c3e1a319c4`
+
+## USB test 3 Arch workstation build (2026-09-12)
+
+The Arch workstation fetched and checked out
+`codex/np750xqa-usb-test-3` at
+`ff15c0cd5cf05a4a9e702a142843853a32d94308`. A fresh LLVM build in
+`out-usb3` completed for `6.17.0-rc4+`; the 60 resolved-configuration checks,
+logger mock suite, GRUB syntax check, Image/modules build and both board DTB
+targets passed. The stripped module staging tree contains 202 modules plus
+the matching built-in metadata. Rootfs, initramfs and final standalone-EFI
+validation remain pending until the identified Kingston medium is attached.
+
+- resolved `.config` SHA-256:
+  `2c9cca784de5df76320ccc35ec32a2c778347bcd363528c44b616822f25137f7`
+- Image SHA-256:
+  `beddf448b3fdab754cfa60f6531b19edfed01cffd1918181032df9a8bde41100`
+- normal board DTB SHA-256:
+  `16cdcd18574c7c3d536ccfb0536c7e22dcecac0ad308bdbd3e823ee803d36c5e`
+- recovery DTB SHA-256:
+  `f555d72918b5dcff57f9904c6aa49193cc924eb4c8c86f571546fdac39b9cf51`
+- GRUB configuration SHA-256:
+  `effcdff7261e588bc710e0c832f572fd677d9029627775ba54f42624acb31a9f`
