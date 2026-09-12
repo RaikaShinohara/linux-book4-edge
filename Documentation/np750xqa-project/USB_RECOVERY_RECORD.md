@@ -335,7 +335,8 @@ The Arch workstation fetched and checked out
 `ff15c0cd5cf05a4a9e702a142843853a32d94308`. A fresh LLVM build in
 `out-usb3` completed for `6.17.0-rc4+`; the 60 resolved-configuration checks,
 logger mock suite, GRUB syntax check, Image/modules build and both board DTB
-targets passed. The stripped module staging tree contains 202 modules plus
+targets passed. The targeted Qualcomm binding and `CHECK_DTBS` validation also
+passed for both DTBs with dtschema 2026.6. The stripped module staging tree contains 202 modules plus
 the matching built-in metadata. Rootfs, initramfs and final standalone-EFI
 validation remain pending until the identified Kingston medium is attached.
 
